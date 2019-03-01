@@ -1,0 +1,26 @@
+<package>
+  <name>behaviortree_cpp_v3</name>
+  <version>3.0.1</version>
+  <description>
+  This package provides the Behavior Trees core library.
+  </description>
+
+  <maintainer email="davide.faconti@gmail.com">Davide Faconti</maintainer>
+
+  <license>MIT</license>
+
+  <author>Michele Colledanchise</author>
+  <author>Davide Faconti</author>
+
+  <build_depend>roslib</build_depend>
+  <run_depend>roslib</run_depend>
+
+  <build_depend>libzmq3-dev</build_depend>
+  <run_depend>libzmq3-dev</run_depend>
+  
+  <build_depend>libdw-dev</build_depend>
+  <run_depend>libdw-dev</run_depend>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+</package>
