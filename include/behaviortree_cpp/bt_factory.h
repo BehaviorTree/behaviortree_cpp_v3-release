@@ -33,9 +33,28 @@ typedef std::function<std::unique_ptr<TreeNode>(const std::string&, const NodeCo
 NodeBuilder;
 
 constexpr const char* PLUGIN_SYMBOL = "BT_RegisterNodesFromPlugin";
+
+#ifndef BT_PLUGIN_EXPORT
+
+#define BT_REGISTER_NODES(factory)                                                                 \
+        static void BT_RegisterNodesFromPlugin(BT::BehaviorTreeFactory& factory)
+
+#else
+
+#ifdef __linux__
+
 #define BT_REGISTER_NODES(factory)                                                                 \
     extern "C" void __attribute__((visibility("default")))                                         \
-    BT_RegisterNodesFromPlugin(BT::BehaviorTreeFactory& factory)
+        BT_RegisterNodesFromPlugin(BT::BehaviorTreeFactory& factory)
+
+#elif _WIN32
+
+#define BT_REGISTER_NODES(factory)                                                                 \
+		__declspec(dllexport) void BT_RegisterNodesFromPlugin(BT::BehaviorTreeFactory& factory)
+#endif
+
+#endif
+
 
 /**
  * @brief Struct used to store a tree.
@@ -75,6 +94,13 @@ public:
 
     /// The most generic way to register your own builder.
     void registerBuilder(const TreeNodeManifest& manifest, const NodeBuilder& builder);
+
+    template <typename T>
+    void registerBuilder(const std::string& ID, const NodeBuilder& builder )
+    {
+        auto manifest = BehaviorTreeFactory::buildManifest<T>(ID);
+        registerBuilder(manifest, builder);
+    }
 
     /**
     * @brief registerSimpleAction help you register nodes of type SimpleActionNode.
@@ -225,9 +251,9 @@ private:
                 config.output_ports.empty() &&
                 has_default_constructor<T>::value)
             {
-                return std::unique_ptr<TreeNode>(new T(name));
+                return std::make_unique<T>(name);
             }
-            return std::unique_ptr<TreeNode>(new T(name, config));
+            return std::make_unique<T>(name, config);
         };
     }
 
