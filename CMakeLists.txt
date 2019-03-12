@@ -2,13 +2,20 @@ cmake_minimum_required(VERSION 2.8.12) # version on Ubuntu Trusty
 project(behaviortree_cpp_v3)
 
 if(NOT CMAKE_VERSION VERSION_LESS 3.1)
-    set(CMAKE_CXX_STANDARD 11)
+    set(CMAKE_CXX_STANDARD 14)
     set(CMAKE_CXX_STANDARD_REQUIRED ON)
 else()
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14")
+endif()
+
+if(MSVC)
+    add_definitions(-D_CRT_SECURE_NO_WARNINGS)
 endif()
 
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+set(CMAKE_DEBUG_POSTFIX d)
+
+add_subdirectory( 3rdparty/tinyXML2 )
 
 set(CMAKE_CONFIG_PATH ${CMAKE_MODULE_PATH}  "${CMAKE_CURRENT_LIST_DIR}/cmake")
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CONFIG_PATH}")
@@ -22,7 +29,7 @@ option(BUILD_TOOLS "Build commandline tools" ON)
 find_package(Threads REQUIRED)
 find_package(ZMQ)
 
-list(APPEND BEHAVIOR_TREE_EXTERNAL_LIBRARIES ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_DL_LIBS})
+list(APPEND BEHAVIOR_TREE_EXTERNAL_LIBRARIES ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_DL_LIBS} tinyxml2_v7)
 
 if( ZMQ_FOUND )
     message(STATUS "ZeroMQ found.")
@@ -34,6 +41,7 @@ else()
 endif()
 
 set(BEHAVIOR_TREE_LIBRARY ${PROJECT_NAME})
+
 
 # Update the policy setting to avoid an error when loading the ament_cmake package
 # at the current cmake version level
@@ -84,11 +92,11 @@ else()
     find_package(GTest)
 
     if(NOT GTEST_FOUND)
-      message(WARNING " GTest not found!")
+      message(WARNING " GTest missing!")
     endif(NOT GTEST_FOUND)
 
     set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
-    set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+    set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
     set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
 endif()
@@ -109,7 +117,6 @@ list(APPEND BT_SOURCE
     src/condition_node.cpp
     src/control_node.cpp
     src/shared_library.cpp
-    src/shared_library_UNIX.cpp
     src/tree_node.cpp
     src/xml_parsing.cpp
 
@@ -129,18 +136,28 @@ list(APPEND BT_SOURCE
     src/loggers/bt_cout_logger.cpp
     src/loggers/bt_file_logger.cpp
     src/loggers/bt_minitrace_logger.cpp
-
-    3rdparty/tinyXML2/tinyxml2.cpp
     3rdparty/minitrace/minitrace.cpp
     )
+
+######################################################
+
 if (NOT backward_ros_FOUND)
-    list(APPEND BT_SOURCE
+    list(APPEND SRC_3rd_PARTY
         3rdparty/backward-cpp/backward.cpp)
 endif()
 
 ######################################################
+if (UNIX)
+	list(APPEND BT_SOURCE src/shared_library_UNIX.cpp )
+        add_library(${BEHAVIOR_TREE_LIBRARY} SHARED ${BT_SOURCE} )
+endif()
 
-add_library(${BEHAVIOR_TREE_LIBRARY} SHARED ${BT_SOURCE} )
+if (WIN32)
+	list(APPEND BT_SOURCE src/shared_library_WIN.cpp )
+        add_library(${BEHAVIOR_TREE_LIBRARY} STATIC ${BT_SOURCE} )
+endif()
+
+
 target_link_libraries(${BEHAVIOR_TREE_LIBRARY} PUBLIC
     ${BEHAVIOR_TREE_EXTERNAL_LIBRARIES})
 
