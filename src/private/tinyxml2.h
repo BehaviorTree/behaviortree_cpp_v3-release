@@ -21,8 +21,8 @@ must not be misrepresented as being the original software.
 distribution.
 */
 
-#ifndef TINYXML2_INCLUDED
-#define TINYXML2_INCLUDED
+#ifndef BT_TINYXML2_INCLUDED
+#define BT_TINYXML2_INCLUDED
 
 #if defined(ANDROID_NDK) || defined(__BORLANDC__) || defined(__QNXNTO__)
 #   include <ctype.h>
@@ -73,7 +73,7 @@ distribution.
 #       define TINYXML2_LIB
 #   endif
 #elif __GNUC__ >= 4
-#   define TINYXML2_LIB __attribute__((visibility("default")))
+#   define TINYXML2_LIB __attribute__((visibility("hidden")))
 #else
 #   define TINYXML2_LIB
 #endif
@@ -113,7 +113,7 @@ static const int TIXML2_PATCH_VERSION = 1;
 // so there needs to be a limit in place.
 static const int TINYXML2_MAX_ELEMENT_DEPTH = 100;
 
-namespace tinyxml2
+namespace BT_TinyXML2
 {
 class XMLDocument;
 class XMLElement;
@@ -2306,4 +2306,4 @@ private:
 #   pragma warning(pop)
 #endif
 
-#endif // TINYXML2_INCLUDED
+#endif // BT_TINYXML2_INCLUDED
