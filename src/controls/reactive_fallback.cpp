@@ -18,7 +18,6 @@ namespace BT
 NodeStatus ReactiveFallback::tick()
 {
     size_t failure_count = 0;
-    size_t running_count = 0;
 
     for (size_t index = 0; index < childrenCount(); index++)
     {
@@ -29,8 +28,9 @@ NodeStatus ReactiveFallback::tick()
         {
             case NodeStatus::RUNNING:
             {
-                running_count++;
-            }break;
+                haltChildren(index+1);
+                return NodeStatus::RUNNING;
+            }
 
             case NodeStatus::FAILURE:
             {

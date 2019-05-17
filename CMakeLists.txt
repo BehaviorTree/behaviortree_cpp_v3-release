@@ -13,8 +13,6 @@ if(MSVC)
 endif()
 
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
-set(CMAKE_DEBUG_POSTFIX d)
-
 
 set(CMAKE_CONFIG_PATH ${CMAKE_MODULE_PATH}  "${CMAKE_CURRENT_LIST_DIR}/cmake")
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CONFIG_PATH}")
@@ -83,12 +81,6 @@ elseif( CATKIN_DEVEL_PREFIX OR CATKIN_BUILD_BINARY_PACKAGE)
     list(APPEND BEHAVIOR_TREE_EXTERNAL_LIBRARIES ${catkin_LIBRARIES})
     set(BUILD_TOOL_INCLUDE_DIRS ${catkin_INCLUDE_DIRS})
 
-    find_package(backward_ros QUIET)
-    if (backward_ros_FOUND)
-        message(STATUS "backward_ros found, using it.")
-        list(APPEND BEHAVIOR_TREE_EXTERNAL_LIBRARIES ${catkin_LIBRARIES} ${backward_ros_LIBRARIES})
-    endif()
-
 else()
     find_package(GTest)
 
@@ -96,14 +88,37 @@ else()
         message(WARNING " GTest missing!")
     endif(NOT GTEST_FOUND)
 
-    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
-    set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
-    set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+endif()
 
+
+#############################################################
+if(ament_cmake_FOUND)
+    set( BEHAVIOR_TREE_LIB_DESTINATION   lib )
+    set( BEHAVIOR_TREE_INC_DESTINATION   include )
+    set( BEHAVIOR_TREE_BIN_DESTINATION   bin )
+
+    ament_export_include_directories(include)
+    ament_export_libraries(${BEHAVIOR_TREE_LIBRARY})
+    ament_package()
+elseif(catkin_FOUND)
+    set( BEHAVIOR_TREE_LIB_DESTINATION   ${CATKIN_PACKAGE_LIB_DESTINATION} )
+    set( BEHAVIOR_TREE_INC_DESTINATION   ${CATKIN_GLOBAL_INCLUDE_DESTINATION} )
+    set( BEHAVIOR_TREE_BIN_DESTINATION   ${CATKIN_PACKAGE_BIN_DESTINATION} )
+else()
+    set( BEHAVIOR_TREE_LIB_DESTINATION   lib )
+    set( BEHAVIOR_TREE_INC_DESTINATION   include )
+    set( BEHAVIOR_TREE_BIN_DESTINATION   bin )
+
+    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${BEHAVIOR_TREE_BIN_DESTINATION}" )
+    set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${BEHAVIOR_TREE_LIB_DESTINATION}" )
+    set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${BEHAVIOR_TREE_BIN_DESTINATION}" )
 endif()
-if(NOT MSVC)
-    list(APPEND BEHAVIOR_TREE_EXTERNAL_LIBRARIES "dw")
-endif()
+
+message( STATUS "BEHAVIOR_TREE_LIB_DESTINATION:   ${BEHAVIOR_TREE_LIB_DESTINATION} " )
+message( STATUS "BEHAVIOR_TREE_BIN_DESTINATION:   ${BEHAVIOR_TREE_BIN_DESTINATION} " )
+message( STATUS "CMAKE_RUNTIME_OUTPUT_DIRECTORY:  ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} " )
+message( STATUS "CMAKE_LIBRARY_OUTPUT_DIRECTORY:  ${CMAKE_LIBRARY_OUTPUT_DIRECTORY} " )
+message( STATUS "CMAKE_ARCHIVE_OUTPUT_DIRECTORY:  ${CMAKE_ARCHIVE_OUTPUT_DIRECTORY} " )
 
 #############################################################
 # LIBRARY
@@ -142,12 +157,9 @@ list(APPEND BT_SOURCE
     3rdparty/minitrace/minitrace.cpp
     )
 
-if (NOT backward_ros_FOUND)
-    list(APPEND SRC_3rd_PARTY
-        3rdparty/backward-cpp/backward.cpp)
-endif()
-
 ######################################################
+set(CMAKE_DEBUG_POSTFIX "d")
+
 if (UNIX)
     list(APPEND BT_SOURCE src/shared_library_UNIX.cpp )
     add_library(${BEHAVIOR_TREE_LIBRARY} SHARED ${BT_SOURCE} )
@@ -158,18 +170,15 @@ if (WIN32)
     add_library(${BEHAVIOR_TREE_LIBRARY} STATIC ${BT_SOURCE} )
 endif()
 
-
 target_link_libraries(${BEHAVIOR_TREE_LIBRARY} PUBLIC
     ${BEHAVIOR_TREE_EXTERNAL_LIBRARIES})
 
 target_compile_definitions(${BEHAVIOR_TREE_LIBRARY} PRIVATE $<$<CONFIG:Debug>:TINYXML2_DEBUG>)
 
-
 target_include_directories(${BEHAVIOR_TREE_LIBRARY} PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:include>
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/3rdparty>
-    $<INSTALL_INTERFACE:3rdparty>
     ${BUILD_TOOL_INCLUDE_DIRS})
 
 if( ZMQ_FOUND )
@@ -180,7 +189,7 @@ if(MSVC)
     target_compile_options(${BEHAVIOR_TREE_LIBRARY} PRIVATE /W4 /WX)
 else()
     target_compile_options(${BEHAVIOR_TREE_LIBRARY} PRIVATE
-        -Wall -Wextra -Werror=return-type -g)
+        -Wall -Wextra -Werror=return-type)
 endif()
 
 ######################################################
@@ -189,30 +198,12 @@ add_subdirectory(tests)
 
 ######################################################
 # INSTALL
-if(ament_cmake_FOUND)
-    set( BEHAVIOR_TREE_LIB_DESTINATION   lib )
-    set( BEHAVIOR_TREE_INC_DESTINATION   include )
-    set( BEHAVIOR_TREE_BIN_DESTINATION   bin )
-
-    ament_export_include_directories(include)
-    ament_export_libraries(${BEHAVIOR_TREE_LIBRARY})
-    ament_package()
-elseif(catkin_FOUND)
-    set( BEHAVIOR_TREE_LIB_DESTINATION   ${CATKIN_PACKAGE_LIB_DESTINATION} )
-    set( BEHAVIOR_TREE_INC_DESTINATION   ${CATKIN_GLOBAL_INCLUDE_DESTINATION} )
-    set( BEHAVIOR_TREE_BIN_DESTINATION   ${CATKIN_PACKAGE_BIN_DESTINATION} )
-else()
-    set( BEHAVIOR_TREE_LIB_DESTINATION   lib )
-    set( BEHAVIOR_TREE_INC_DESTINATION   include )
-    set( BEHAVIOR_TREE_BIN_DESTINATION   bin )
-endif()
-
 set(PROJECT_NAMESPACE BehaviorTree)
 set(PROJECT_CONFIG ${PROJECT_NAMESPACE}Config)
 
 INSTALL(TARGETS ${BEHAVIOR_TREE_LIBRARY}
     EXPORT ${PROJECT_CONFIG}
-    ARCHIVE DESTINATION ${BEHAVIOR_TREE_LIB_DESTINATION}
+    ARCHIVE DESTINATION ${BEHAVIOR_TREE_BIN_DESTINATION}
     LIBRARY DESTINATION ${BEHAVIOR_TREE_LIB_DESTINATION}
     )
 
