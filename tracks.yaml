@@ -36,7 +36,7 @@ tracks:
       -i :{release_inc} --os-name debian --os-not-required
     - git-bloom-generate -y rosrpm --prefix release/:{ros_distro} :{ros_distro} -i
       :{release_inc}
-    devel_branch: ' dashing-release'
+    devel_branch: ros2-dev
     last_version: 3.0.8
     name: upstream
     patches: null
