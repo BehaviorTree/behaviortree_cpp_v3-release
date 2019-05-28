@@ -1,3 +1,26 @@
+## behaviortree_cpp_v3 (dashing) - 3.0.8-2
+
+The packages in the `behaviortree_cpp_v3` repository were released into the `dashing` distro by running `/usr/bin/bloom-release --rosdistro dashing --track dashing behaviortree_cpp_v3` on `Tue, 28 May 2019 18:47:05 -0000`
+
+The `behaviortree_cpp_v3` package was released.
+
+Version of package(s) in repository `behaviortree_cpp_v3`:
+
+- upstream repository: https://github.com/BehaviorTree/BehaviorTree.CPP.git
+- release repository: https://github.com/BehaviorTree/behaviortree_cpp_v3-release.git
+- rosdistro version: `3.0.8-1`
+- old version: `3.0.8-1`
+- new version: `3.0.8-2`
+
+Versions of tools used:
+
+- bloom version: `0.8.0`
+- catkin_pkg version: `0.4.12`
+- rosdep version: `0.15.2`
+- rosdistro version: `0.7.4`
+- vcstools version: `0.1.40`
+
+
 ## behaviortree_cpp_v3 (dashing) - 3.0.8-1
 
 The packages in the `behaviortree_cpp_v3` repository were released into the `dashing` distro by running `/usr/bin/bloom-release --rosdistro dashing --track dashing behaviortree_cpp_v3` on `Fri, 17 May 2019 08:03:07 -0000`
