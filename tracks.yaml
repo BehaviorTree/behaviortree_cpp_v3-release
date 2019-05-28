@@ -37,10 +37,10 @@ tracks:
     - git-bloom-generate -y rosrpm --prefix release/:{ros_distro} :{ros_distro} -i
       :{release_inc}
     devel_branch: ros2-dev
-    last_version: 3.0.8
+    last_version: 3.0.9
     name: upstream
     patches: null
-    release_inc: '2'
+    release_inc: '1'
     release_repo_url: null
     release_tag: :{version}
     ros_distro: dashing
