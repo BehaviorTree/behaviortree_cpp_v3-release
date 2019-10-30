@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 2.8)
 
 include_directories( ../sample_nodes )
 
+set(CMAKE_DEBUG_POSTFIX "")
 
 # The plugin libdummy_nodes.so can be linked statically or
 # loaded dynamically at run-time.
@@ -34,8 +35,10 @@ target_link_libraries(t07_wrap_legacy   ${BEHAVIOR_TREE_LIBRARY} )
 add_executable(t08_additional_node_args   t08_additional_node_args.cpp )
 target_link_libraries(t08_additional_node_args   ${BEHAVIOR_TREE_LIBRARY} )
 
-add_executable(t09_async_actions_coroutines  t09_async_actions_coroutines.cpp )
-target_link_libraries(t09_async_actions_coroutines ${BEHAVIOR_TREE_LIBRARY} )
+if (NOT MINGW)
+    add_executable(t09_async_actions_coroutines  t09_async_actions_coroutines.cpp )
+    target_link_libraries(t09_async_actions_coroutines ${BEHAVIOR_TREE_LIBRARY} )
+endif()
 
 add_executable(t10_include_trees  t10_include_trees.cpp )
 target_link_libraries(t10_include_trees  ${BEHAVIOR_TREE_LIBRARY} dummy_nodes )
