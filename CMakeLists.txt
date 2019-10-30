@@ -12,6 +12,10 @@ if(MSVC)
     add_definitions(-D_CRT_SECURE_NO_WARNINGS)
 endif()
 
+if( MINGW )
+    add_definitions(-DBT_NO_COROUTINES)
+endif()
+
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 set(CMAKE_CONFIG_PATH ${CMAKE_MODULE_PATH}  "${CMAKE_CURRENT_LIST_DIR}/cmake")
@@ -51,6 +55,8 @@ endif()
 find_package(ament_cmake QUIET)
 
 if ( ament_cmake_FOUND )
+    find_package(ament_cmake_gtest REQUIRED)
+
     # Not adding -DUSING_ROS since xml_parsing.cpp hasn't been ported to ROS2
 
     message(STATUS "------------------------------------------")
@@ -101,7 +107,7 @@ if(ament_cmake_FOUND)
 elseif(catkin_FOUND)
     set( BEHAVIOR_TREE_LIB_DESTINATION   ${CATKIN_PACKAGE_LIB_DESTINATION} )
     set( BEHAVIOR_TREE_INC_DESTINATION   ${CATKIN_GLOBAL_INCLUDE_DESTINATION} )
-    set( BEHAVIOR_TREE_BIN_DESTINATION   ${CATKIN_PACKAGE_BIN_DESTINATION} )
+    set( BEHAVIOR_TREE_BIN_DESTINATION   ${CATKIN_GLOBAL_BIN_DESTINATION} )
 else()
     set( BEHAVIOR_TREE_LIB_DESTINATION   lib )
     set( BEHAVIOR_TREE_INC_DESTINATION   include )
@@ -156,7 +162,6 @@ list(APPEND BT_SOURCE
     )
 
 ######################################################
-set(CMAKE_DEBUG_POSTFIX "d")
 
 if (UNIX)
     list(APPEND BT_SOURCE src/shared_library_UNIX.cpp )
@@ -164,6 +169,7 @@ if (UNIX)
 endif()
 
 if (WIN32)
+    set(CMAKE_DEBUG_POSTFIX "d")
     list(APPEND BT_SOURCE src/shared_library_WIN.cpp )
     add_library(${BEHAVIOR_TREE_LIBRARY} STATIC ${BT_SOURCE} )
 endif()
