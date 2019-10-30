@@ -1,3 +1,26 @@
+## behaviotree_cpp_v3 (kinetic) - 3.1.0-1
+
+The packages in the `behaviotree_cpp_v3` repository were released into the `kinetic` distro by running `/usr/bin/bloom-release behaviotree_cpp_v3 --rosdistro kinetic` on `Wed, 30 Oct 2019 17:43:16 -0000`
+
+The `behaviortree_cpp_v3` package was released.
+
+Version of package(s) in repository `behaviotree_cpp_v3`:
+
+- upstream repository: https://github.com/BehaviorTree/BehaviorTree.CPP.git
+- release repository: https://github.com/BehaviorTree/behaviortree_cpp_v3-release.git
+- rosdistro version: `3.0.7-0`
+- old version: `3.0.7-0`
+- new version: `3.1.0-1`
+
+Versions of tools used:
+
+- bloom version: `0.9.0`
+- catkin_pkg version: `0.4.14`
+- rosdep version: `0.17.1`
+- rosdistro version: `0.7.5`
+- vcstools version: `0.1.42`
+
+
 ## behaviortree_cpp_v3 (dashing) - 3.0.9-1
 
 The packages in the `behaviortree_cpp_v3` repository were released into the `dashing` distro by running `/usr/bin/bloom-release --rosdistro dashing --track dashing behaviortree_cpp_v3 --edit` on `Tue, 28 May 2019 18:53:46 -0000`
