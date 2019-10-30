@@ -12,6 +12,10 @@ if(MSVC)
     add_definitions(-D_CRT_SECURE_NO_WARNINGS)
 endif()
 
+if( MINGW )
+    add_definitions(-DBT_NO_COROUTINES)
+endif()
+
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 set(CMAKE_CONFIG_PATH ${CMAKE_MODULE_PATH}  "${CMAKE_CURRENT_LIST_DIR}/cmake")
@@ -51,6 +55,8 @@ endif()
 find_package(ament_cmake QUIET)
 
 if ( ament_cmake_FOUND )
+    find_package(ament_cmake_gtest REQUIRED)
+
     # Not adding -DUSING_ROS since xml_parsing.cpp hasn't been ported to ROS2
 
     message(STATUS "------------------------------------------")
