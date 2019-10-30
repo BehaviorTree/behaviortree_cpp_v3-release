@@ -1,3 +1,26 @@
+## behaviortree_cpp_v3 (kinetic) - 3.1.0-2
+
+The packages in the `behaviortree_cpp_v3` repository were released into the `kinetic` distro by running `/usr/bin/bloom-release behaviortree_cpp_v3 --rosdistro kinetic` on `Wed, 30 Oct 2019 23:06:00 -0000`
+
+The `behaviortree_cpp_v3` package was released.
+
+Version of package(s) in repository `behaviortree_cpp_v3`:
+
+- upstream repository: https://github.com/BehaviorTree/BehaviorTree.CPP.git
+- release repository: unknown
+- rosdistro version: `null`
+- old version: `3.1.0-1`
+- new version: `3.1.0-2`
+
+Versions of tools used:
+
+- bloom version: `0.9.0`
+- catkin_pkg version: `0.4.14`
+- rosdep version: `0.17.1`
+- rosdistro version: `0.7.5`
+- vcstools version: `0.1.42`
+
+
 ## behaviortree_cpp_v3 (eloquent) - 3.1.0-1
 
 The packages in the `behaviortree_cpp_v3` repository were released into the `eloquent` distro by running `/usr/bin/bloom-release behaviortree_cpp_v3 --rosdistro eloquent --edit-track` on `Wed, 30 Oct 2019 22:52:57 -0000`
