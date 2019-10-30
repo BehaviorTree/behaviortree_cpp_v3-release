@@ -36,13 +36,13 @@ tracks:
       -i :{release_inc} --os-name debian --os-not-required
     - git-bloom-generate -y rosrpm --prefix release/:{ros_distro} :{ros_distro} -i
       :{release_inc}
-    devel_branch: ros2-dev
+    devel_branch: ros2-devel
     last_version: 3.0.9
     name: upstream
     patches: null
     release_inc: '1'
     release_repo_url: null
-    release_tag: :{version}
+    release_tag: ros2-3.1.0
     ros_distro: dashing
     vcs_type: git
     vcs_uri: https://github.com/BehaviorTree/BehaviorTree.CPP.git
