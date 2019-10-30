@@ -13,7 +13,7 @@
 #include <gtest/gtest.h>
 #include "action_test_node.h"
 #include "condition_test_node.h"
-#include "behaviortree_cpp/behavior_tree.h"
+#include "behaviortree_cpp_v3/behavior_tree.h"
 
 using BT::NodeStatus;
 using std::chrono::milliseconds;
@@ -38,14 +38,14 @@ struct SimpleFallbackTest : testing::Test
     }
 };
 
-struct ParallelOneTest : testing::Test
+struct ReactiveFallbackTest : testing::Test
 {
     BT::ReactiveFallback root;
     BT::ConditionTestNode condition_1;
     BT::ConditionTestNode condition_2;
     BT::AsyncActionTest action_1;
 
-    ParallelOneTest()
+    ReactiveFallbackTest()
       : root("root_first")
       , condition_1("condition_1")
       , condition_2("condition_2")
@@ -55,7 +55,7 @@ struct ParallelOneTest : testing::Test
         root.addChild(&condition_2);
         root.addChild(&action_1);
     }
-    ~ParallelOneTest()
+    ~ReactiveFallbackTest()
     {
         haltAllActions(&root);
     }
@@ -152,7 +152,7 @@ TEST_F(SimpleFallbackTest, ConditionChangeWhileRunning)
     ASSERT_EQ(NodeStatus::RUNNING, action.status());
 }
 
-TEST_F(ParallelOneTest, Condition1ToTrue)
+TEST_F(ReactiveFallbackTest, Condition1ToTrue)
 {
     condition_1.setBoolean(false);
     condition_2.setBoolean(false);
@@ -174,7 +174,7 @@ TEST_F(ParallelOneTest, Condition1ToTrue)
     ASSERT_EQ(NodeStatus::IDLE, action_1.status());
 }
 
-TEST_F(ParallelOneTest, Condition2ToTrue)
+TEST_F(ReactiveFallbackTest, Condition2ToTrue)
 {
     condition_1.setBoolean(false);
     condition_2.setBoolean(false);
