@@ -1,4 +1,4 @@
-#include "behaviortree_cpp/bt_factory.h"
+#include "behaviortree_cpp_v3/bt_factory.h"
 
 //#define MANUAL_STATIC_LINKING
 
@@ -70,7 +70,7 @@ int main()
 #else
     // Load dynamically a plugin and register the TreeNodes it contains
     // it automated the registering step.
-    factory.registerFromPlugin("./libdummy_nodes.so");
+    factory.registerFromPlugin("./libdummy_nodes_dyn.so");
 #endif
 
     // Trees are created at deployment-time (i.e. at run-time, but only once at the beginning).

@@ -11,13 +11,13 @@
 *   WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-#include "behaviortree_cpp/decorators/retry_node.h"
+#include "behaviortree_cpp_v3/decorators/retry_node.h"
 
 namespace BT
 {
 constexpr const char* RetryNode::NUM_ATTEMPTS;
 
-RetryNode::RetryNode(const std::string& name, unsigned int NTries)
+RetryNode::RetryNode(const std::string& name, int NTries)
     : DecoratorNode(name, {} ),
     max_attempts_(NTries),
     try_index_(0),
