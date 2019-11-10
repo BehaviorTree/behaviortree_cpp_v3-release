@@ -43,7 +43,7 @@ tracks:
     patches: null
     release_inc: '1'
     release_repo_url: null
-    release_tag: ros2-3.1.0
+    release_tag: :{ask}
     ros_distro: dashing
     vcs_type: git
     vcs_uri: https://github.com/BehaviorTree/BehaviorTree.CPP.git
