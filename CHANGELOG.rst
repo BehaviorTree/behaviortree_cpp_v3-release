@@ -2,6 +2,11 @@
 Changelog for package behaviortree_cpp
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+3.1.1 (2019-11-10)
+------------------
+* fix samples compilation (hopefully)
+* Contributors: Davide Faconti
+
 3.1.0 (2019-10-30)
 ------------------
 * Error message corrected
