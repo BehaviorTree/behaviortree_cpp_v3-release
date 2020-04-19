@@ -11,45 +11,5 @@
 *   WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-#ifndef PARALLEL_NODE_H
-#define PARALLEL_NODE_H
-
-#include <set>
-#include "behaviortree_cpp_v3/control_node.h"
-
-namespace BT
-{
-
-class ParallelNode : public ControlNode
-{
-  public:
-
-    ParallelNode(const std::string& name, unsigned threshold);
-
-    ParallelNode(const std::string& name, const NodeConfiguration& config);
-
-    static PortsList providedPorts()
-    {
-        return { InputPort<unsigned>(THRESHOLD_KEY) };
-    }
-
-    ~ParallelNode() = default;
-
-    virtual void halt() override;
-
-    unsigned int thresholdM();
-    void setThresholdM(unsigned int threshold_M);
-
-  private:
-    unsigned int threshold_;
-
-    std::set<int> skip_list_;
-
-    bool read_parameter_from_ports_;
-    static constexpr const char* THRESHOLD_KEY = "threshold";
-
-    virtual BT::NodeStatus tick() override;
-};
-
-}
-#endif   // PARALLEL_NODE_H
+#include "behaviortree_cpp_v3/controls/switch_node.h"
+#include "behaviortree_cpp_v3/action_node.h"
