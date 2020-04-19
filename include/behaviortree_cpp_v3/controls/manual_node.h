@@ -1,5 +1,4 @@
-/* Copyright (C) 2015-2018 Michele Colledanchise -  All Rights Reserved
- * Copyright (C) 2018-2020 Davide Faconti, Eurecat -  All Rights Reserved
+/* Copyright (C) 2020 Davide Faconti -  All Rights Reserved
 *
 *   Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),
 *   to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -11,45 +10,50 @@
 *   WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-#ifndef PARALLEL_NODE_H
-#define PARALLEL_NODE_H
+#ifndef MANUAL_SELECTION_NODE_H
+#define MANUAL_SELECTION_NODE_H
 
-#include <set>
 #include "behaviortree_cpp_v3/control_node.h"
 
 namespace BT
 {
-
-class ParallelNode : public ControlNode
+/**
+ * @brief Use a Terminal User Interface (ncurses) to select a certain child manually.
+ */
+class ManualSelectorNode : public ControlNode
 {
   public:
+    ManualSelectorNode(const std::string& name, const NodeConfiguration& config);
 
-    ParallelNode(const std::string& name, unsigned threshold);
-
-    ParallelNode(const std::string& name, const NodeConfiguration& config);
-
-    static PortsList providedPorts()
-    {
-        return { InputPort<unsigned>(THRESHOLD_KEY) };
-    }
-
-    ~ParallelNode() = default;
+    virtual ~ManualSelectorNode() override = default;
 
     virtual void halt() override;
 
-    unsigned int thresholdM();
-    void setThresholdM(unsigned int threshold_M);
+    static PortsList providedPorts()
+    {
+        return { InputPort<bool>(REPEAT_LAST_SELECTION, false,
+                                 "If true, execute again the same child that was selected the last time") };
+    }
 
   private:
-    unsigned int threshold_;
 
-    std::set<int> skip_list_;
-
-    bool read_parameter_from_ports_;
-    static constexpr const char* THRESHOLD_KEY = "threshold";
+    static constexpr const char* REPEAT_LAST_SELECTION = "repeat_last_selection";
 
     virtual BT::NodeStatus tick() override;
+    int running_child_idx_;
+    int previously_executed_idx_;
+
+    enum NumericarStatus{
+        NUM_SUCCESS = 253,
+        NUM_FAILURE = 254,
+        NUM_RUNNING = 255,
+    };
+
+    NodeStatus selectStatus() const;
+
+    uint8_t selectChild() const;
 };
 
 }
-#endif   // PARALLEL_NODE_H
+
+#endif // MANUAL_SELECTION_NODE_H
