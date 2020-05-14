@@ -22,11 +22,20 @@ class SubtreeNode : public DecoratorNode
   private:
     virtual BT::NodeStatus tick() override;
 
+    static PortsList providedPorts()
+    {
+        return { InputPort<bool>("__shared_blackboard", false,
+                                 "If false (default) the subtree has its own blackboard and you"
+                                 "need to do port remapping to connect it to the parent") };
+    }
+
     virtual NodeType type() const override final
     {
         return NodeType::SUBTREE;
     }
 };
+
+
 
 /**
  * @brief The SubtreePlus is a new kind of subtree that gives you much more control over remapping:
@@ -77,6 +86,12 @@ public:
 
 private:
   virtual BT::NodeStatus tick() override;
+
+  static PortsList providedPorts()
+  {
+      return { InputPort<bool>("__autoremap", false,
+                               "If true, all the ports with the same name will be remapped") };
+  }
 
   virtual NodeType type() const override final
   {
