@@ -17,6 +17,7 @@ BT::NodeStatus BT::SubtreeNode::tick()
     return child_node_->executeTick();
 }
 
+
 //--------------------------------
 BT::SubtreePlusNode::SubtreePlusNode(const std::string &name) :
      DecoratorNode(name, {} )
