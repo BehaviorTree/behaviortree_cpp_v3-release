@@ -63,7 +63,7 @@ tracks:
       :{release_inc}
     devel_branch: master
     last_release: ros2-3.1.1
-    last_version: 3.1.1
+    last_version: 3.5.0
     name: upstream
     patches: null
     release_inc: '1'
