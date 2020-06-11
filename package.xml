@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package format="3">
   <name>behaviortree_cpp_v3</name>
-  <version>3.5.0</version>
+  <version>3.5.1</version>
   <description>
   This package provides the Behavior Trees core library.
   </description>
@@ -21,6 +21,8 @@
 
   <depend>libzmq3-dev</depend>
   <depend>libncurses-dev</depend>
+  
+  <test_depend condition="$ROS_VERSION == 2">ament_cmake_gtest</test_depend>
 
   <export>
       <build_type condition="$ROS_VERSION == 1">catkin</build_type>
