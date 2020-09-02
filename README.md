@@ -1,3 +1,26 @@
+## behaviortree_cpp_v3 (noetic) - 3.5.2-1
+
+The packages in the `behaviortree_cpp_v3` repository were released into the `noetic` distro by running `/usr/bin/bloom-release --ros-distro noetic behaviortree_cpp_v3 -y` on `Wed, 02 Sep 2020 13:08:42 -0000`
+
+The `behaviortree_cpp_v3` package was released.
+
+Version of package(s) in repository `behaviortree_cpp_v3`:
+
+- upstream repository: https://github.com/BehaviorTree/BehaviorTree.CPP.git
+- release repository: unknown
+- rosdistro version: `null`
+- old version: `null`
+- new version: `3.5.2-1`
+
+Versions of tools used:
+
+- bloom version: `0.9.8`
+- catkin_pkg version: `0.4.22`
+- rosdep version: `0.19.0`
+- rosdistro version: `0.8.2`
+- vcstools version: `0.1.42`
+
+
 ## behaviotree_cpp_v3 (melodic) - 3.5.2-1
 
 The packages in the `behaviotree_cpp_v3` repository were released into the `melodic` distro by running `/usr/bin/bloom-release --ros-distro melodic behaviotree_cpp_v3` on `Wed, 02 Sep 2020 13:01:57 -0000`
