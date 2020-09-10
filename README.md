@@ -1,3 +1,26 @@
+## behaviortree_cpp_v3 (eloquent) - 3.5.3-1
+
+The packages in the `behaviortree_cpp_v3` repository were released into the `eloquent` distro by running `/usr/bin/bloom-release --ros-distro eloquent behaviortree_cpp_v3 -y` on `Thu, 10 Sep 2020 10:58:25 -0000`
+
+The `behaviortree_cpp_v3` package was released.
+
+Version of package(s) in repository `behaviortree_cpp_v3`:
+
+- upstream repository: https://github.com/BehaviorTree/BehaviorTree.CPP.git
+- release repository: https://github.com/BehaviorTree/behaviortree_cpp_v3-release.git
+- rosdistro version: `3.5.2-1`
+- old version: `3.5.2-1`
+- new version: `3.5.3-1`
+
+Versions of tools used:
+
+- bloom version: `0.9.8`
+- catkin_pkg version: `0.4.22`
+- rosdep version: `0.19.0`
+- rosdistro version: `0.8.2`
+- vcstools version: `0.1.42`
+
+
 ## behaviortree_cpp_v3 (eloquent) - 3.5.2-1
 
 The packages in the `behaviortree_cpp_v3` repository were released into the `eloquent` distro by running `/usr/bin/bloom-release --ros-distro eloquent behaviortree_cpp_v3 -y` on `Wed, 02 Sep 2020 13:18:22 -0000`
