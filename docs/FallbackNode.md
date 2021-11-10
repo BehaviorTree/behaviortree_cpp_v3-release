@@ -5,6 +5,11 @@ in other frameworks.
 
 Their purpose is to try different strategies, until we find one that "works".
 
+Currently the framework provides two kinds of nodes:
+
+- Fallback
+- ReactiveFallback
+
 They share the following rules:
 
 - Before ticking the first child, the node status becomes __RUNNING__.
@@ -12,19 +17,24 @@ They share the following rules:
 - If a child returns __FAILURE__, the fallback ticks the next child.
 
 - If the __last__ child returns __FAILURE__ too, all the children are halted and
- the sequence returns __FAILURE__.
+ the fallback returns __FAILURE__.
  
 - If a child returns __SUCCESS__, it stops and returns __SUCCESS__.
   All the children are halted. 
 
-The two versions of Fallback differ in the way they react when a child returns
-RUNNING:
+To understand how the two ControlNodes differ, refer to the following table:
 
-- FallbackStar will return RUNNING and the next time it is ticked,
- it will tick the same child where it left off before.
- 
-- Plain old Fallback will return RUNNING and the index of the next child to
- execute is reset after each execution.
+| Type of ControlNode | Child returns RUNNING |
+|---|:---:|
+| Fallback | Tick again  |
+| ReactiveFallback  |  Restart |
+
+- "__Restart__" means that the entire fallback is restarted from the first 
+  child of the list.
+
+- "__Tick again__" means that the next time the fallback is ticked, the 
+  same child is ticked again. Previous sibling, which returned FAILURE already,
+  are not ticked again.
 
 ## Fallback
 
@@ -78,7 +88,6 @@ if he/she is fully rested.
 
 ??? example "See the pseudocode"
 	``` c++
-		// index is initialized to 0 in the constructor
 		status = RUNNING;
 
 		for (int index=0; index < number_of_children; index++)
@@ -86,21 +95,20 @@ if he/she is fully rested.
 			child_status = child[index]->tick();
 			
 			if( child_status == RUNNING ) {
+				// Suspend all subsequent siblings and return RUNNING.
+				HaltSubsequentSiblings();
 				return RUNNING;
 			}
-			else if( child_status == FAILURE ) {
-				// continue the while loop
-				index++;
-			}
-			else if( child_status == SUCCESS ) {
+			
+			// if child_status == FAILURE, continue to tick next sibling
+			
+			if( child_status == SUCCESS ) {
 				// Suspend execution and return SUCCESS.
-				// At the next tick, index will be the same.
-   			    HaltAllChildren();
+   				HaltAllChildren();
 				return SUCCESS;
 			}
 		}
 		// all the children returned FAILURE. Return FAILURE too.
-		index = 0;
 		HaltAllChildren();
 		return FAILURE;
 	```	
