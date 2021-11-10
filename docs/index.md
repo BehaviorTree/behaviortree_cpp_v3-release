@@ -13,7 +13,7 @@ __BehaviorTree.CPP__ has many interesting features, when compared to other imple
 
 - It makes asynchronous Actions, i.e. non-blocking, a first-class citizen.
 - It allows the creation of trees at run-time, using a textual representation (XML).
-- You can link staticaly you custom TreeNodes or convert them into plugins 
+- You can link staticaly your custom TreeNodes or convert them into plugins
 which are loaded at run-time.
 - It includes a __logging/profiling__ infrastructure that allows the user 
 to visualize, record, replay and analyze state transitions.
@@ -52,7 +52,7 @@ make possible to express more complex control flows. The user can extend the
 
 ## "Ok, but WHY do we need BehaviorTrees (or FSM)?"
 
-Many software systems, being robotics a notable example, are inherently
+Many software systems, robotics being a notable example, are inherently
 complex.
 
 The usual approach to manage complexity, heterogeneity and scalability is to 
