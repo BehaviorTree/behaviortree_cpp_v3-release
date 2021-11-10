@@ -2,8 +2,8 @@
 #include <iostream>
 #include <fstream>
 #include <signal.h>
-#include <zmq.hpp>
 #include <fstream>
+#include "cppzmq/zmq.hpp"
 #include "behaviortree_cpp_v3/flatbuffers/BT_logger_generated.h"
 
 // http://zguide.zeromq.org/cpp:interrupt
@@ -16,12 +16,17 @@ static void s_signal_handler(int)
 
 static void CatchSignals(void)
 {
+#ifdef _WIN32
+    signal(SIGINT, s_signal_handler);
+    signal(SIGTERM, s_signal_handler);
+#else
     struct sigaction action;
     action.sa_handler = s_signal_handler;
     action.sa_flags = 0;
     sigemptyset(&action.sa_mask);
-    sigaction(SIGINT, &action, NULL);
-    sigaction(SIGTERM, &action, NULL);
+    sigaction(SIGINT, &action, nullptr);
+    sigaction(SIGTERM, &action, nullptr);
+#endif
 }
 
 int main(int argc, char* argv[])
@@ -44,7 +49,7 @@ int main(int argc, char* argv[])
     subscriber.connect("tcp://localhost:1666");
 
     //  Subscribe to everything
-    subscriber.setsockopt(ZMQ_SUBSCRIBE, "", 0);
+    subscriber.set(zmq::sockopt::subscribe, "");
 
     printf("----------- Started -----------------\n");
 
@@ -57,7 +62,7 @@ int main(int argc, char* argv[])
         zmq::message_t msg;
         try
         {
-            subscriber.recv(&update, 0);
+            subscriber.recv(update, zmq::recv_flags::none);
         }
         catch (zmq::error_t& e)
         {
