@@ -3,7 +3,6 @@
 [![Build Status](https://travis-ci.org/BehaviorTree/BehaviorTree.CPP.svg?branch=master)](https://travis-ci.org/BehaviorTree/BehaviorTree.CPP)
 [![ros1](https://github.com/BehaviorTree/BehaviorTree.CPP/workflows/ros1/badge.svg?branch=master)](https://github.com/BehaviorTree/BehaviorTree.CPP/actions?query=workflow%3Aros1)
 [![ros2](https://github.com/BehaviorTree/BehaviorTree.CPP/workflows/ros2/badge.svg?branch=master)](https://github.com/BehaviorTree/BehaviorTree.CPP/actions?query=workflow%3Aros2)
-[![Build status](https://ci.appveyor.com/api/projects/status/8lawroklgnrkg38f?svg=true)](https://ci.appveyor.com/project/facontidavide59577/behaviortree-cpp)
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/f7489a1758ab47d49f62342f9649b62a)](https://www.codacy.com/manual/davide.faconti/BehaviorTree.CPP?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=BehaviorTree/BehaviorTree.CPP&amp;utm_campaign=Badge_Grade)
 [![LGTM Grade](https://img.shields.io/lgtm/grade/cpp/github/BehaviorTree/BehaviorTree.CPP)](https://lgtm.com/projects/g/BehaviorTree/BehaviorTree.CPP/context:cpp)
 [![Join the chat at https://gitter.im/BehaviorTree-ROS/Lobby](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/BehaviorTree-ROS/Lobby?utm_source=badge&utm_medium=badge&utm_content=badge)
@@ -45,9 +44,10 @@ To find more details about the conceptual ideas that make this implementation di
 
 # Does your company use BehaviorTree.CPP?
 
-No company, institution or public/private funding is currently supporting the development of BehaviorTree.CPP and Groot.
+No company, institution or public/private funding is currently supporting the development of BehaviorTree.CPP and Groot. As a consequence, my time to support **BehaviorTree.CPP** is very limited and I decided won't spend any time at all supporting **Groot**.
+Pull Requests are welcome and will be reviewed, even if with some delay.
 
-Consider becoming a **sponsor** to support bug fixing and development of new features. You can find contact details in [package.xml](package.xml).
+If your company use this software, consider becoming a **sponsor** to support bug fixing and development of new features. You can find contact details in [package.xml](package.xml).
 
 # Design principles
 
