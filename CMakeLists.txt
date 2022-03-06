@@ -15,36 +15,44 @@ else()
     add_definitions(-Wpedantic)
 endif()
 
-#---- Include boost to add coroutines ----
-find_package(Boost COMPONENTS coroutine QUIET)
-
-if(Boost_FOUND)
-    string(REPLACE "." "0" Boost_VERSION_NODOT ${Boost_VERSION})
-    if(NOT Boost_VERSION_NODOT VERSION_LESS 105900)
-        message(STATUS "Found boost::coroutine2.")
-        add_definitions(-DBT_BOOST_COROUTINE2)
-        set(BT_COROUTINES true)
-    elseif(NOT Boost_VERSION_NODOT VERSION_LESS 105300)
-        message(STATUS "Found boost::coroutine.")
-        add_definitions(-DBT_BOOST_COROUTINE)
-        set(BT_COROUTINES true)
-    endif()
-    include_directories(${Boost_INCLUDE_DIRS})
-endif()
-
-
-if(NOT DEFINED BT_COROUTINES)
-    message(STATUS "Coroutines disabled. Install Boost to enable them (version 1.59+ recommended).")
-    add_definitions(-DBT_NO_COROUTINES)
-endif()
-
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 #---- project configuration ----
 option(BUILD_EXAMPLES   "Build tutorials and examples" ON)
+option(BUILD_SAMPLES    "Build sample nodes" ON)
 option(BUILD_UNIT_TESTS "Build the unit tests" ON)
 option(BUILD_TOOLS "Build commandline tools" ON)
 option(BUILD_SHARED_LIBS "Build shared libraries" ON)
+option(ENABLE_COROUTINES "Enable boost coroutines" ON)
+
+#---- Include boost to add coroutines ----
+if(ENABLE_COROUTINES)
+    find_package(Boost COMPONENTS coroutine QUIET)
+
+    if(Boost_FOUND)
+        string(REPLACE "." "0" Boost_VERSION_NODOT ${Boost_VERSION})
+        if(NOT Boost_VERSION_NODOT VERSION_LESS 105900)
+            message(STATUS "Found boost::coroutine2.")
+            add_definitions(-DBT_BOOST_COROUTINE2)
+            set(BT_COROUTINES true)
+        elseif(NOT Boost_VERSION_NODOT VERSION_LESS 105300)
+            message(STATUS "Found boost::coroutine.")
+            add_definitions(-DBT_BOOST_COROUTINE)
+            set(BT_COROUTINES true)
+        endif()
+        include_directories(${Boost_INCLUDE_DIRS})
+    endif()
+
+    if(NOT DEFINED BT_COROUTINES)
+        message(STATUS "Boost coroutines disabled. Install Boost (version 1.59+ recommended).")
+    endif()
+else()
+    message(STATUS "Boost coroutines disabled by CMake option.")
+endif()
+
+if(NOT DEFINED BT_COROUTINES)
+    add_definitions(-DBT_NO_COROUTINES)
+endif()
 
 #---- Find other packages ----
 find_package(Threads)
@@ -75,8 +83,7 @@ find_package(ament_cmake QUIET)
 
 if ( ament_cmake_FOUND )
 
-    # Not adding -DUSING_ROS since xml_parsing.cpp hasn't been ported to ROS2
-
+    add_definitions( -DUSING_ROS2 )
     message(STATUS "------------------------------------------")
     message(STATUS "BehaviourTree is being built using AMENT.")
     message(STATUS "------------------------------------------")
@@ -104,38 +111,16 @@ elseif( CATKIN_DEVEL_PREFIX OR CATKIN_BUILD_BINARY_PACKAGE)
     set(BUILD_TOOL_INCLUDE_DIRS ${catkin_INCLUDE_DIRS})
 
 elseif(BUILD_UNIT_TESTS)
-    find_package(GTest REQUIRED)
+    include(FetchContent)
+    FetchContent_Declare(
+      googletest
+      URL https://github.com/google/googletest/archive/609281088cfefc76f9d0ce82e1ff6c30cc3591e5.zip
+    )
+    # For Windows: Prevent overriding the parent project's compiler/linker settings
+    set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+    FetchContent_MakeAvailable(googletest)
 endif()
 
-
-#############################################################
-if(ament_cmake_FOUND)
-    set( BEHAVIOR_TREE_LIB_DESTINATION   lib )
-    set( BEHAVIOR_TREE_INC_DESTINATION   include )
-    set( BEHAVIOR_TREE_BIN_DESTINATION   bin )
-
-    ament_export_include_directories(include)
-    ament_export_libraries(${BEHAVIOR_TREE_LIBRARY})
-    ament_package()
-elseif(catkin_FOUND)
-    set( BEHAVIOR_TREE_LIB_DESTINATION   ${CATKIN_PACKAGE_LIB_DESTINATION} )
-    set( BEHAVIOR_TREE_INC_DESTINATION   ${CATKIN_GLOBAL_INCLUDE_DESTINATION} )
-    set( BEHAVIOR_TREE_BIN_DESTINATION   ${CATKIN_GLOBAL_BIN_DESTINATION} )
-else()
-    set( BEHAVIOR_TREE_LIB_DESTINATION   lib )
-    set( BEHAVIOR_TREE_INC_DESTINATION   include )
-    set( BEHAVIOR_TREE_BIN_DESTINATION   bin )
-
-    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${BEHAVIOR_TREE_BIN_DESTINATION}" )
-    set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${BEHAVIOR_TREE_LIB_DESTINATION}" )
-    set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${BEHAVIOR_TREE_BIN_DESTINATION}" )
-endif()
-
-message( STATUS "BEHAVIOR_TREE_LIB_DESTINATION:   ${BEHAVIOR_TREE_LIB_DESTINATION} " )
-message( STATUS "BEHAVIOR_TREE_BIN_DESTINATION:   ${BEHAVIOR_TREE_BIN_DESTINATION} " )
-message( STATUS "CMAKE_RUNTIME_OUTPUT_DIRECTORY:  ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} " )
-message( STATUS "CMAKE_LIBRARY_OUTPUT_DIRECTORY:  ${CMAKE_LIBRARY_OUTPUT_DIRECTORY} " )
-message( STATUS "CMAKE_ARCHIVE_OUTPUT_DIRECTORY:  ${CMAKE_ARCHIVE_OUTPUT_DIRECTORY} " )
 
 #############################################################
 # LIBRARY
@@ -192,17 +177,18 @@ endif()
 
 if (UNIX)
     list(APPEND BT_SOURCE src/shared_library_UNIX.cpp )
-    if (BUILD_SHARED_LIBS)
-        add_library(${BEHAVIOR_TREE_LIBRARY} SHARED ${BT_SOURCE})
-    else()
-        add_library(${BEHAVIOR_TREE_LIBRARY} STATIC ${BT_SOURCE})
-    endif()
 endif()
 
 if (WIN32)
     set(CMAKE_DEBUG_POSTFIX "d")
     list(APPEND BT_SOURCE src/shared_library_WIN.cpp )
-    add_library(${BEHAVIOR_TREE_LIBRARY} STATIC ${BT_SOURCE} )
+endif()
+
+if (BUILD_SHARED_LIBS)
+    set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
+    add_library(${BEHAVIOR_TREE_LIBRARY} SHARED ${BT_SOURCE})
+else()
+    add_library(${BEHAVIOR_TREE_LIBRARY} STATIC ${BT_SOURCE})
 endif()
 
 if( ZMQ_FOUND )
@@ -239,6 +225,38 @@ else()
     target_compile_options(${BEHAVIOR_TREE_LIBRARY} PRIVATE
         -Wall -Wextra -Werror=return-type)
 endif()
+
+#############################################################
+if(ament_cmake_FOUND)
+    find_package(ament_index_cpp REQUIRED)
+    ament_target_dependencies(${BEHAVIOR_TREE_LIBRARY} PUBLIC ament_index_cpp)
+
+    set( BEHAVIOR_TREE_LIB_DESTINATION   lib )
+    set( BEHAVIOR_TREE_INC_DESTINATION   include )
+    set( BEHAVIOR_TREE_BIN_DESTINATION   bin )
+
+    ament_export_include_directories(include)
+    ament_export_libraries(${BEHAVIOR_TREE_LIBRARY})
+    ament_package()
+elseif(catkin_FOUND)
+    set( BEHAVIOR_TREE_LIB_DESTINATION   ${CATKIN_PACKAGE_LIB_DESTINATION} )
+    set( BEHAVIOR_TREE_INC_DESTINATION   ${CATKIN_GLOBAL_INCLUDE_DESTINATION} )
+    set( BEHAVIOR_TREE_BIN_DESTINATION   ${CATKIN_GLOBAL_BIN_DESTINATION} )
+else()
+    set( BEHAVIOR_TREE_LIB_DESTINATION   lib )
+    set( BEHAVIOR_TREE_INC_DESTINATION   include )
+    set( BEHAVIOR_TREE_BIN_DESTINATION   bin )
+
+    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${BEHAVIOR_TREE_BIN_DESTINATION}" )
+    set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${BEHAVIOR_TREE_LIB_DESTINATION}" )
+    set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${BEHAVIOR_TREE_BIN_DESTINATION}" )
+endif()
+
+message( STATUS "BEHAVIOR_TREE_LIB_DESTINATION:   ${BEHAVIOR_TREE_LIB_DESTINATION} " )
+message( STATUS "BEHAVIOR_TREE_BIN_DESTINATION:   ${BEHAVIOR_TREE_BIN_DESTINATION} " )
+message( STATUS "CMAKE_RUNTIME_OUTPUT_DIRECTORY:  ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} " )
+message( STATUS "CMAKE_LIBRARY_OUTPUT_DIRECTORY:  ${CMAKE_LIBRARY_OUTPUT_DIRECTORY} " )
+message( STATUS "CMAKE_ARCHIVE_OUTPUT_DIRECTORY:  ${CMAKE_ARCHIVE_OUTPUT_DIRECTORY} " )
 
 ######################################################
 # Samples
