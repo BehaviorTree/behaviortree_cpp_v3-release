@@ -44,7 +44,14 @@ It is also the first practical example that uses `Decorators` and `Fallback`.
 </root>
 ```
 
-It may be noticed that we incapsulated a quite complex branch of the tree,
+For readability, our custom nodes are registered with the one-liner:
+
+`CrossDoor::RegisterNodes(factory);`
+
+Default nodes provided by the BT library such as `Fallback` are already registered by
+the BehaviorTreeFactory.
+
+It may be noticed that we encapsulated a quite complex branch of the tree,
 the one to execute when the door is closed, into a separate tree called
 `DoorClosed`.
 
@@ -110,9 +117,16 @@ int main()
         while( status == NodeStatus::RUNNING)
         {
             status = tree.tickRoot();
-            CrossDoor::SleepMS(1);   // optional sleep to avoid "busy loops"
+            // IMPORTANT: you must always add some sleep if you call tickRoot()
+            // in a loop, to avoid using 100% of your CPU (busy loop).
+            // The method Tree::sleep() is recommended, because it can be
+            // interrupted by an internal event inside the tree.
+            tree.sleep( milliseconds(10) );
         }
-        CrossDoor::SleepMS(2000);
+        if( LOOP )
+        {
+            std::this_thread::sleep_for( milliseconds(1000) );
+        }
     }
     return 0;
 }

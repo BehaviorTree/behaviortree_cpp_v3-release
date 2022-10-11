@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.5.1) # version on Ubuntu Xenial
+cmake_minimum_required(VERSION 3.10.2) # version on Ubuntu Bionic
 project(behaviortree_cpp_v3)
 
 #---- Add the subdirectory cmake ----
@@ -10,7 +10,7 @@ set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 if(MSVC)
-    add_definitions(-D_CRT_SECURE_NO_WARNINGS)
+    add_definitions(-D_CRT_SECURE_NO_WARNINGS -DWIN32_LEAN_AND_MEAN)
 else()
     add_definitions(-Wpedantic)
 endif()
@@ -23,6 +23,7 @@ option(BUILD_SAMPLES    "Build sample nodes" ON)
 option(BUILD_UNIT_TESTS "Build the unit tests" ON)
 option(BUILD_TOOLS "Build commandline tools" ON)
 option(BUILD_SHARED_LIBS "Build shared libraries" ON)
+option(BUILD_MANUAL_SELECTOR "Build manual selector node" ON)
 option(ENABLE_COROUTINES "Enable boost coroutines" ON)
 
 #---- Include boost to add coroutines ----
@@ -111,14 +112,18 @@ elseif( CATKIN_DEVEL_PREFIX OR CATKIN_BUILD_BINARY_PACKAGE)
     set(BUILD_TOOL_INCLUDE_DIRS ${catkin_INCLUDE_DIRS})
 
 elseif(BUILD_UNIT_TESTS)
-    include(FetchContent)
-    FetchContent_Declare(
-      googletest
-      URL https://github.com/google/googletest/archive/609281088cfefc76f9d0ce82e1ff6c30cc3591e5.zip
-    )
-    # For Windows: Prevent overriding the parent project's compiler/linker settings
-    set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
-    FetchContent_MakeAvailable(googletest)
+    if(${CMAKE_VERSION} VERSION_LESS "3.11.0")
+        find_package(GTest REQUIRED)
+    else()
+        include(FetchContent)
+        FetchContent_Declare(
+            googletest
+            URL https://github.com/google/googletest/archive/609281088cfefc76f9d0ce82e1ff6c30cc3591e5.zip
+            )
+        # For Windows: Prevent overriding the parent project's compiler/linker settings
+        set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+        FetchContent_MakeAvailable(googletest)
+    endif()
 endif()
 
 
@@ -157,19 +162,22 @@ list(APPEND BT_SOURCE
     src/loggers/bt_cout_logger.cpp
     src/loggers/bt_file_logger.cpp
     src/loggers/bt_minitrace_logger.cpp
-    src/private/tinyxml2.cpp
 
+    3rdparty/tinyxml2/tinyxml2.cpp
     3rdparty/minitrace/minitrace.cpp
     )
 
-find_package(Curses QUIET)
-
-if(CURSES_FOUND)
-    list(APPEND BT_SOURCE
-        src/controls/manual_node.cpp
-        )
-    list(APPEND BEHAVIOR_TREE_PUBLIC_LIBRARIES ${CURSES_LIBRARIES})
-    add_definitions(-DNCURSES_FOUND)
+if(BUILD_MANUAL_SELECTOR)
+    find_package(Curses QUIET)
+    if(CURSES_FOUND)
+        list(APPEND BT_SOURCE
+            src/controls/manual_node.cpp
+            )
+        list(APPEND BEHAVIOR_TREE_PUBLIC_LIBRARIES ${CURSES_LIBRARIES})
+        add_definitions(-DNCURSES_FOUND)
+    else()
+        message(WARNING "NCurses NOT found. Skipping the build of manual selector node.")
+    endif()
 endif()
 
 
@@ -230,6 +238,7 @@ endif()
 if(ament_cmake_FOUND)
     find_package(ament_index_cpp REQUIRED)
     ament_target_dependencies(${BEHAVIOR_TREE_LIBRARY} PUBLIC ament_index_cpp)
+    ament_export_dependencies(ament_index_cpp)
 
     set( BEHAVIOR_TREE_LIB_DESTINATION   lib )
     set( BEHAVIOR_TREE_INC_DESTINATION   include )
@@ -247,16 +256,12 @@ else()
     set( BEHAVIOR_TREE_INC_DESTINATION   include )
     set( BEHAVIOR_TREE_BIN_DESTINATION   bin )
 
-    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${BEHAVIOR_TREE_BIN_DESTINATION}" )
-    set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${BEHAVIOR_TREE_LIB_DESTINATION}" )
-    set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${BEHAVIOR_TREE_BIN_DESTINATION}" )
 endif()
 
 message( STATUS "BEHAVIOR_TREE_LIB_DESTINATION:   ${BEHAVIOR_TREE_LIB_DESTINATION} " )
 message( STATUS "BEHAVIOR_TREE_BIN_DESTINATION:   ${BEHAVIOR_TREE_BIN_DESTINATION} " )
-message( STATUS "CMAKE_RUNTIME_OUTPUT_DIRECTORY:  ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} " )
-message( STATUS "CMAKE_LIBRARY_OUTPUT_DIRECTORY:  ${CMAKE_LIBRARY_OUTPUT_DIRECTORY} " )
-message( STATUS "CMAKE_ARCHIVE_OUTPUT_DIRECTORY:  ${CMAKE_ARCHIVE_OUTPUT_DIRECTORY} " )
+message( STATUS "BUILD_UNIT_TESTS:   ${BUILD_UNIT_TESTS} " )
+
 
 ######################################################
 # Samples
@@ -274,7 +279,7 @@ endif()
 # INSTALL
 
 INSTALL(TARGETS ${BEHAVIOR_TREE_LIBRARY}
-    EXPORT BehaviorTreeV3Config
+    EXPORT ${PROJECT_NAME}Targets
     ARCHIVE DESTINATION ${BEHAVIOR_TREE_LIB_DESTINATION}
     LIBRARY DESTINATION ${BEHAVIOR_TREE_LIB_DESTINATION}
     RUNTIME DESTINATION ${BEHAVIOR_TREE_BIN_DESTINATION}
@@ -284,15 +289,36 @@ INSTALL( DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include/
     DESTINATION ${BEHAVIOR_TREE_INC_DESTINATION}
     FILES_MATCHING PATTERN "*.h*")
 
-install(EXPORT BehaviorTreeV3Config
-    DESTINATION "${BEHAVIOR_TREE_LIB_DESTINATION}/BehaviorTreeV3/cmake"
-    NAMESPACE BT::)
-
-export(TARGETS ${PROJECT_NAME}
+install(EXPORT ${PROJECT_NAME}Targets
+    FILE "${PROJECT_NAME}Targets.cmake"
+    DESTINATION "${BEHAVIOR_TREE_LIB_DESTINATION}/cmake/${PROJECT_NAME}"
     NAMESPACE BT::
-    FILE "${CMAKE_CURRENT_BINARY_DIR}/BehaviorTreeV3Config.cmake")
+    )
 
 export(PACKAGE ${PROJECT_NAME})
+
+include(CMakePackageConfigHelpers)
+
+configure_package_config_file(
+  "${CMAKE_CURRENT_SOURCE_DIR}/cmake/Config.cmake.in"
+  "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Config.cmake"
+  INSTALL_DESTINATION "${BEHAVIOR_TREE_LIB_DESTINATION}/cmake/${PROJECT_NAME}"
+)
+
+# This requires to declare to project version in the project() macro
+
+#write_basic_package_version_file(
+#  "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}ConfigVersion.cmake"
+#  VERSION ${PROJECT_VERSION}
+#  COMPATIBILITY AnyNewerVersion
+#)
+
+install(
+  FILES
+    "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Config.cmake"
+    #    "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}ConfigVersion.cmake"
+    DESTINATION "${BEHAVIOR_TREE_LIB_DESTINATION}/cmake/${PROJECT_NAME}"
+)
 
 ######################################################
 # EXAMPLES and TOOLS
