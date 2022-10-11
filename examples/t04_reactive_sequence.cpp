@@ -53,82 +53,95 @@ static const char* xml_text_reactive = R"(
 
 void Assert(bool condition)
 {
-    if (!condition)
-        throw RuntimeError("this is not what I expected");
+  if (!condition)
+    throw RuntimeError("this is not what I expected");
 }
 
 int main()
 {
-    using namespace DummyNodes;
+  using namespace DummyNodes;
+  using std::chrono::milliseconds;
 
-    BehaviorTreeFactory factory;
-    factory.registerSimpleCondition("BatteryOK", std::bind(CheckBattery));
-    factory.registerNodeType<MoveBaseAction>("MoveBase");
-    factory.registerNodeType<SaySomething>("SaySomething");
+  BehaviorTreeFactory factory;
+  factory.registerSimpleCondition("BatteryOK", std::bind(CheckBattery));
+  factory.registerNodeType<MoveBaseAction>("MoveBase");
+  factory.registerNodeType<SaySomething>("SaySomething");
 
-    // Compare the state transitions and messages using either
-    // xml_text_sequence and xml_text_sequence_star
+  // Compare the state transitions and messages using either
+  // xml_text_sequence and xml_text_sequence_star
 
-    // The main difference that you should notice is:
-    //  1) When Sequence is used, BatteryOK is executed at __each__ tick()
-    //  2) When SequenceStar is used, those ConditionNodes are executed only __once__.
+  // The main difference that you should notice is:
+  //  1) When Sequence is used, BatteryOK is executed at __each__ tick()
+  //  2) When SequenceStar is used, those ConditionNodes are executed only __once__.
 
-    for (auto& xml_text : {xml_text_sequence, xml_text_reactive})
+  for (auto& xml_text : {xml_text_sequence, xml_text_reactive})
+  {
+    std::cout << "\n------------ BUILDING A NEW TREE ------------" << std::endl;
+
+    auto tree = factory.createTreeFromText(xml_text);
+
+    // Here, instead of tree.tickRootWhileRunning(),
+    // we prefer our own loop.
+    std::cout << "--- ticking\n";
+    NodeStatus status = tree.tickRoot();
+    std::cout << "--- status: " << toStr(status) << "\n\n";
+
+    while(status == NodeStatus::RUNNING)
     {
-        std::cout << "\n------------ BUILDING A NEW TREE ------------" << std::endl;
+      // Sleep to avoid busy loops.
+      // do NOT use other sleep functions!
+      // Small sleep time is OK, here we use a large one only to
+      // have less messages on the console.
+      tree.sleep(std::chrono::milliseconds(100));
 
-        auto tree = factory.createTreeFromText(xml_text);
-
-        NodeStatus status;
-
-        std::cout << "\n--- 1st executeTick() ---" << std::endl;
-        status = tree.tickRoot();
-        Assert(status == NodeStatus::RUNNING);
-
-        SleepMS(150);
-        std::cout << "\n--- 2nd executeTick() ---" << std::endl;
-        status = tree.tickRoot();
-        Assert(status == NodeStatus::RUNNING);
-
-        SleepMS(150);
-        std::cout << "\n--- 3rd executeTick() ---" << std::endl;
-        status = tree.tickRoot();
-        Assert(status == NodeStatus::SUCCESS);
-
-        std::cout << std::endl;
+      std::cout << "--- ticking\n";
+      status = tree.tickRoot();
+      std::cout << "--- status: " << toStr(status) << "\n\n";
     }
-    return 0;
+  }
+  return 0;
 }
 
 /*
- Expected output:
+* Expected output:
 
 ------------ BUILDING A NEW TREE ------------
-
---- 1st executeTick() ---
+--- ticking
 [ Battery: OK ]
-Robot says: "mission started..."
+Robot says: mission started...
+--- status: RUNNING
+
 [ MoveBase: STARTED ]. goal: x=1 y=2.0 theta=3.00
+--- ticking
+--- status: RUNNING
 
---- 2nd executeTick() ---
+--- ticking
+--- status: RUNNING
+
 [ MoveBase: FINISHED ]
+--- ticking
+Robot says: mission completed!
+--- status: SUCCESS
 
---- 3rd executeTick() ---
-Robot says: "mission completed!"
 
 ------------ BUILDING A NEW TREE ------------
-
---- 1st executeTick() ---
+--- ticking
 [ Battery: OK ]
-Robot says: "mission started..."
+Robot says: mission started...
+--- status: RUNNING
+
 [ MoveBase: STARTED ]. goal: x=1 y=2.0 theta=3.00
-
---- 2nd executeTick() ---
+--- ticking
 [ Battery: OK ]
+--- status: RUNNING
+
+--- ticking
+[ Battery: OK ]
+--- status: RUNNING
+
 [ MoveBase: FINISHED ]
-
---- 3rd executeTick() ---
+--- ticking
 [ Battery: OK ]
-Robot says: "mission completed!"
-
+Robot says: mission completed!
+--- status: SUCCESS
 */

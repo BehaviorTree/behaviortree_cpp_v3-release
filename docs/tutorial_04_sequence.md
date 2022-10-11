@@ -1,4 +1,4 @@
-# Sequences and AsyncActionNode
+# Reactive Sequences and Asynchronous Nodes
 
 The next example shows the difference between a `SequenceNode` and a 
 `ReactiveSequence`.
@@ -6,6 +6,13 @@ The next example shows the difference between a `SequenceNode` and a
 An Asynchronous Action has it's own thread. This allows the user to 
 use blocking functions but to return the flow of execution 
 to the tree.
+
+!!! warning "Learn more about Asynchronous Actions"
+     
+    Users should fully understand how Concurrency is achieved in BT.CPP
+    and learn best practices about how to develop their own Asynchronous
+    Actions. You will find an extensive article 
+    [here](asynchronous_nodes.md).
 
 ```C++
 
@@ -56,11 +63,11 @@ NodeStatus MoveBaseAction::tick()
     int count = 0;
 
     // Pretend that "computing" takes 250 milliseconds.
-    // It is up to you to check periodicall _halt_requested and interrupt
+    // It is up to you to check periodically _halt_requested and interrupt
     // this tick() if it is true.
     while (!_halt_requested && count++ < 25)
     {
-        SleepMS(10);
+        std::this_thread::sleep_for( std::chrono::milliseconds(10) );
     }
 
     std::cout << "[ MoveBase: FINISHED ]" << std::endl;
@@ -98,6 +105,7 @@ The following example should use a simple `SequenceNode`.
 int main()
 {
     using namespace DummyNodes;
+    using std::chrono::milliseconds;
 
     BehaviorTreeFactory factory;
     factory.registerSimpleCondition("BatteryOK", std::bind(CheckBattery));
@@ -111,11 +119,11 @@ int main()
     std::cout << "\n--- 1st executeTick() ---" << std::endl;
     status = tree.tickRoot();
 
-    SleepMS(150);
+    tree.sleep( milliseconds(150) );
     std::cout << "\n--- 2nd executeTick() ---" << std::endl;
     status = tree.tickRoot();
 
-    SleepMS(150);
+    tree.sleep( milliseconds(150) );
     std::cout << "\n--- 3rd executeTick() ---" << std::endl;
     status = tree.tickRoot();
 
@@ -183,6 +191,16 @@ Expected output:
     [ Battery: OK ]
     Robot says: "mission completed!"
 ```
+
+## Event Driven trees?
+
+!!! important 
+    We used the command `tree.sleep()` instead of `std::this_thread::sleep_for()` for a reason.
+    
+The method `Tree::sleep()` should be preferred, because it can be interrupted by a Node in the tree when
+"something changed".
+Tree::sleep() will be interrupted when an `AsyncActionNode::tick()` is completed or, more generally,
+when the method `TreeNode::emitStateChanged()` is invoked.
 
 
 

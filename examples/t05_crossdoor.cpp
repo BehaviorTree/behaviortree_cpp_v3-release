@@ -18,7 +18,6 @@
  * trace the state transitions in the tree for debugging purposes.
  */
 
-
 // clang-format off
 
 static const char* xml_text = R"(
@@ -59,44 +58,40 @@ using namespace BT;
 
 int main(int argc, char** argv)
 {
-    BT::BehaviorTreeFactory factory;
+  BT::BehaviorTreeFactory factory;
 
-    // register all the actions into the factory
-    CrossDoor::RegisterNodes(factory);
+  // Register our custom nodes into the factory.
+  // Any default nodes provided by the BT library (such as Fallback) are registered by
+  // default in the BehaviorTreeFactory.
+  CrossDoor::RegisterNodes(factory);
 
-    // Important: when the object tree goes out of scope, all the TreeNodes are destroyed
-    auto tree = factory.createTreeFromText(xml_text);
+  // Important: when the object tree goes out of scope, all the TreeNodes are destroyed
+  auto tree = factory.createTreeFromText(xml_text);
 
-    // This logger prints state changes on console
-    StdCoutLogger logger_cout(tree);
+  // This logger prints state changes on console
+  StdCoutLogger logger_cout(tree);
 
-    // This logger saves state changes on file
-    FileLogger logger_file(tree, "bt_trace.fbl");
+  // This logger saves state changes on file
+  FileLogger logger_file(tree, "bt_trace.fbl");
 
-    // This logger stores the execution time of each node
-    MinitraceLogger logger_minitrace(tree, "bt_trace.json");
+  // This logger stores the execution time of each node
+  MinitraceLogger logger_minitrace(tree, "bt_trace.json");
 
 #ifdef ZMQ_FOUND
-    // This logger publish status changes using ZeroMQ. Used by Groot
-    PublisherZMQ publisher_zmq(tree);
+  // This logger publish status changes using ZeroMQ. Used by Groot
+  PublisherZMQ publisher_zmq(tree);
 #endif
 
-    printTreeRecursively(tree.rootNode());
+  printTreeRecursively(tree.rootNode());
 
-    const bool LOOP = ( argc == 2 && strcmp( argv[1], "loop") == 0);
+  const bool LOOP = (argc == 2 && strcmp(argv[1], "loop") == 0);
 
-    do
-    {
-        NodeStatus status = NodeStatus::RUNNING;
-        // Keep on ticking until you get either a SUCCESS or FAILURE state
-        while( status == NodeStatus::RUNNING)
-        {
-            status = tree.tickRoot();
-            CrossDoor::SleepMS(1);   // optional sleep to avoid "busy loops"
-        }
-        CrossDoor::SleepMS(1000);
-    }
-    while(LOOP);
+  NodeStatus status = tree.tickRoot();
+  while(LOOP || status == NodeStatus::RUNNING)
+  {
+    tree.sleep(std::chrono::milliseconds(10));
+    status = tree.tickRoot();
+  }
 
-    return 0;
+  return 0;
 }
