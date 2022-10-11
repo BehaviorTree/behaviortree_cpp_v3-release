@@ -18,7 +18,12 @@ set(BT_TESTS
   navigation_test.cpp
   gtest_subtree.cpp
   gtest_switch.cpp
+  gtest_wakeup.cpp
 )
+
+if( ZMQ_FOUND )
+    LIST( APPEND BT_TESTS gtest_logger_zmq.cpp)
+endif()
 
 if( BT_COROUTINES )
     LIST( APPEND BT_TESTS gtest_coroutines.cpp)
@@ -58,6 +63,11 @@ elseif(BUILD_UNIT_TESTS)
                                                 bt_sample_nodes gtest gtest_main)
     target_include_directories(${BEHAVIOR_TREE_LIBRARY}_test PRIVATE gtest/include ${GTEST_INCLUDE_DIRS})
 
-    add_test(BehaviorTreeCoreTest ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${BEHAVIOR_TREE_LIBRARY}_test)
+    add_custom_command(TARGET ${BEHAVIOR_TREE_LIBRARY}_test POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+            ${CMAKE_SOURCE_DIR}/tests/trees
+            trees)
+
+    add_test(BehaviorTreeCoreTest ${BEHAVIOR_TREE_LIBRARY}_test)
 
 endif()
