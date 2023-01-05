@@ -1,3 +1,26 @@
+## behaviortree_cpp_v3 (foxy) - 3.8.2-1
+
+The packages in the `behaviortree_cpp_v3` repository were released into the `foxy` distro by running `/usr/bin/bloom-release --rosdistro foxy behaviortree_cpp_v3 -e` on `Thu, 05 Jan 2023 09:50:20 -0000`
+
+The `behaviortree_cpp_v3` package was released.
+
+Version of package(s) in repository `behaviortree_cpp_v3`:
+
+- upstream repository: https://github.com/BehaviorTree/BehaviorTree.CPP.git
+- release repository: unknown
+- rosdistro version: `null`
+- old version: `null`
+- new version: `3.8.2-1`
+
+Versions of tools used:
+
+- bloom version: `0.11.2`
+- catkin_pkg version: `0.5.2`
+- rosdep version: `0.22.1`
+- rosdistro version: `0.9.0`
+- vcstools version: `0.1.42`
+
+
 ## behaviotree_cpp_v3 (melodic) - 3.8.1-1
 
 The packages in the `behaviotree_cpp_v3` repository were released into the `melodic` distro by running `/usr/bin/bloom-release behaviotree_cpp_v3 --rosdistro melodic --edit-track` on `Sun, 27 Nov 2022 19:33:57 -0000`
