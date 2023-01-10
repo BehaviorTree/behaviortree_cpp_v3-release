@@ -1,12 +1,10 @@
 ![License MIT](https://img.shields.io/github/license/BehaviorTree/BehaviorTree.CPP?color=blue)
-![Version](https://img.shields.io/badge/version-3.5-blue.svg)
-[![Build Status](https://travis-ci.org/BehaviorTree/BehaviorTree.CPP.svg?branch=master)](https://travis-ci.org/BehaviorTree/BehaviorTree.CPP)
+![Version](https://img.shields.io/badge/version-3.8-blue.svg)
+[![cmake](https://github.com/BehaviorTree/BehaviorTree.CPP/actions/workflows/cmake.yml/badge.svg)](https://github.com/BehaviorTree/BehaviorTree.CPP/actions/workflows/cmake.yml)
 [![ros1](https://github.com/BehaviorTree/BehaviorTree.CPP/workflows/ros1/badge.svg?branch=master)](https://github.com/BehaviorTree/BehaviorTree.CPP/actions?query=workflow%3Aros1)
 [![ros2](https://github.com/BehaviorTree/BehaviorTree.CPP/workflows/ros2/badge.svg?branch=master)](https://github.com/BehaviorTree/BehaviorTree.CPP/actions?query=workflow%3Aros2)
-[![Build status](https://ci.appveyor.com/api/projects/status/8lawroklgnrkg38f?svg=true)](https://ci.appveyor.com/project/facontidavide59577/behaviortree-cpp)
-[![Codacy Badge](https://app.codacy.com/project/badge/Grade/f7489a1758ab47d49f62342f9649b62a)](https://www.codacy.com/manual/davide.faconti/BehaviorTree.CPP?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=BehaviorTree/BehaviorTree.CPP&amp;utm_campaign=Badge_Grade)
 [![LGTM Grade](https://img.shields.io/lgtm/grade/cpp/github/BehaviorTree/BehaviorTree.CPP)](https://lgtm.com/projects/g/BehaviorTree/BehaviorTree.CPP/context:cpp)
-[![Join the chat at https://gitter.im/BehaviorTree-ROS/Lobby](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/BehaviorTree-ROS/Lobby?utm_source=badge&utm_medium=badge&utm_content=badge)
+![Discourse topics](https://img.shields.io/discourse/topics?server=https%3A%2F%2Fdiscourse.behaviortree.dev)
 
 # BehaviorTree.CPP
 
@@ -37,12 +35,22 @@ to visualize, record, replay and analyze state transitions.
 
 - Last but not least: it is well [documented](https://www.behaviortree.dev/)!
 
-# Documentation
+## Documentation
 
 You can learn about the main concepts, the API and the tutorials here: https://www.behaviortree.dev/
 
-To find more details about the conceptual ideas that make this implementation different from others, you can read the [final deliverable of the project MOOD2Be](https://github.com/BehaviorTree/BehaviorTree.CPP/blob/master/MOOD2Be_final_report.pdf).
+To find more details about the conceptual ideas that make this implementation different from others,
+you can read the [final deliverable of the project MOOD2Be](https://github.com/BehaviorTree/BehaviorTree.CPP/blob/master/MOOD2Be_final_report.pdf).
 
+## Forum and Community
+
+If the documentation doesn't answer your questions and/or you want to
+connect with the other **BT.CPP** users, visit https://discourse.behaviortree.dev/
+
+## Commercial support
+
+Are you using BT.CPP in your commercial product and you need technical support / consulting?
+You can get in touch at dfaconti@aurynrobotics.com and we will happy to discuss your use case and needs.
 
 # Design principles
 
@@ -107,7 +115,7 @@ project(hello_BT)
 
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-find_package(BehaviorTreeV3)
+find_package(behaviortree_cpp_v3)
 
 add_executable(${PROJECT_NAME} "hello_BT.cpp")
 target_link_libraries(${PROJECT_NAME} BT::behaviortree_cpp_v3)
@@ -124,7 +132,7 @@ to your catkin workspace.
 
 # Acknowledgement
 
-This library was developed at  **Eurecat - https://eurecat.org/en/** (main author, Davide Faconti) in a joint effort
+This library was initially developed at  **Eurecat - https://eurecat.org/en/** (main author, Davide Faconti) in a joint effort
 with the **Italian Institute of Technology** (Michele Colledanchise).
 
 This software is one of the main components of [MOOD2Be](https://eurecat.org/en/portfolio-items/mood2be/),
@@ -153,7 +161,10 @@ The Preprint version (free) is available here: https://arxiv.org/abs/1709.00084
 The MIT License (MIT)
 
 Copyright (c) 2014-2018 Michele Colledanchise
-Copyright (c) 2018-2020 Davide Faconti
+
+Copyright (c) 2018-2019 Davide Faconti, Eurecat
+
+Copyright (c) 2019-2021 Davide Faconti
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
