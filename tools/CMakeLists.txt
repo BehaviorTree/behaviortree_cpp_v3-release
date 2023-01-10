@@ -1,5 +1,6 @@
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 3.5)
 
+include_directories(${PROJECT_SOURCE_DIR}/3rdparty)
 
 add_executable(bt3_log_cat         bt_log_cat.cpp )
 target_link_libraries(bt3_log_cat  ${BEHAVIOR_TREE_LIBRARY} )
@@ -8,7 +9,7 @@ install(TARGETS bt3_log_cat
 
 if( ZMQ_FOUND )
     add_executable(bt3_recorder         bt_recorder.cpp )
-    target_link_libraries(bt3_recorder  ${BEHAVIOR_TREE_LIBRARY} )
+    target_link_libraries(bt3_recorder  ${BEHAVIOR_TREE_LIBRARY} ${ZMQ_LIBRARIES})
     install(TARGETS bt3_recorder
             DESTINATION ${BEHAVIOR_TREE_BIN_DESTINATION} )
 endif()
