@@ -2,6 +2,287 @@
 Changelog for package behaviortree_cpp
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+3.8.2 (2023-01-05)
+------------------
+* rebane haltChildren to resetChildren
+* revert `#329 <https://github.com/BehaviorTree/BehaviorTree.CPP/issues/329>`_
+* Contributors: Davide Faconti
+
+3.8.1 (2022-11-27)
+------------------
+* fix catkin installation `#478 <https://github.com/BehaviorTree/BehaviorTree.CPP/issues/478>`_
+* cherry picking changes from v4
+* fix `#227 <https://github.com/BehaviorTree/BehaviorTree.CPP/issues/227>`_
+* fix issue `#461 <https://github.com/BehaviorTree/BehaviorTree.CPP/issues/461>`_
+* fix issue `#413 <https://github.com/BehaviorTree/BehaviorTree.CPP/issues/413>`_ (Delay logic)
+* Update README.md
+* Contributors: Davide Faconti
+
+3.8.0 (2022-10-11)
+------------------
+* tickRootWhileRunning method
+* Fix: PublisherZMQ::flush is called after the publisher has been destructed (`#426 <https://github.com/BehaviorTree/BehaviorTree.CPP/issues/426>`_)
+  * fix: PublisherZMQ::flush is called after the publisher has been destructed
+  * style: Adjust code formatting of ~PublisherZMQ
+  * chore: Install zmq-dev in ubuntu pipeline and exclude gtest_logger_zmq.cpp when zmq is not found.
+  * chore: Define WIN32_LEAN_AND_MEAN to avoid ambiguity between tinyxml and msxml
+* fix missing closing brace in unit test (`#442 <https://github.com/BehaviorTree/BehaviorTree.CPP/issues/442>`_)
+* Fix incorrect registration of behavior trees containing faulty XML (`#438 <https://github.com/BehaviorTree/BehaviorTree.CPP/issues/438>`_)
+  * fix incorrect registration of faulty trees
+  * format
+  * simplify XML validation
+  * fix possible out-of-range exception in tests
+  * Add tests
+  * reduce scale of diffs
+  * fix comment
+  * add more test cases
+  Co-authored-by: Davide Faconti <davide.faconti@gmail.com>
+* Add functionality to clear registered behavior trees. (`#439 <https://github.com/BehaviorTree/BehaviorTree.CPP/issues/439>`_)
+  Co-authored-by: Jere Liukkonen <jere@picknik.ai>
+* Wait for the thread to finish before deleting zmq (`#440 <https://github.com/BehaviorTree/BehaviorTree.CPP/issues/440>`_)
+  Co-authored-by: JafarAbdi <cafer.abdi@gmail.com>
+* clang form at
+* clang format
+* new clang format
+* Moving tinyxml2 to 3rdparty
+* Merge branch 'master' of github.com:BehaviorTree/BehaviorTree.CPP
+* backporting changes from v4.x
+* Update README.md
+* fix warnings
+* Merge branch 'master' of github.com:BehaviorTree/BehaviorTree.CPP
+* fix issue `#433 <https://github.com/BehaviorTree/BehaviorTree.CPP/issues/433>`_
+* Added ros_environment dependency to make sure ROS_VERSION is initialized (`#420 <https://github.com/BehaviorTree/BehaviorTree.CPP/issues/420>`_)
+* Added XML validation for decorators without children (`#424 <https://github.com/BehaviorTree/BehaviorTree.CPP/issues/424>`_)
+  * Added unit tests to demonstrate failure
+  * Added validation that decorators have only one child
+* Update expected-lite to 0.6.2 (`#418 <https://github.com/BehaviorTree/BehaviorTree.CPP/issues/418>`_)
+* fix test
+* parallel node fix
+* threshold child count dynamically in parallel control node (`#363 <https://github.com/BehaviorTree/BehaviorTree.CPP/issues/363>`_)
+* Adding the reserved word "_description" (`#394 <https://github.com/BehaviorTree/BehaviorTree.CPP/issues/394>`_)
+* fix(README): change find_package() instruction for BT external usage (`#401 <https://github.com/BehaviorTree/BehaviorTree.CPP/issues/401>`_)
+  Co-authored-by: Luca Bonamini <luca.bonamini@yapemobility.it>
+* Example suggests it's not restricted to a few (`#414 <https://github.com/BehaviorTree/BehaviorTree.CPP/issues/414>`_)
+  * Example suggests it's not restricted to a few
+  * Update delay_node.h
+  Fix flow of sentence, milliseconds is already put in specification.
+* documentation and doc correction
+* Merge branch 'master' of github.com:BehaviorTree/BehaviorTree.CPP
+* improve writeTreeNodesModelXML
+* Shutdown zmq context after joining the server thread and flushing (`#400 <https://github.com/BehaviorTree/BehaviorTree.CPP/issues/400>`_)
+* Update README.md
+* add option to conditionally build manual selector node (`#397 <https://github.com/BehaviorTree/BehaviorTree.CPP/issues/397>`_)
+  * add option to conditionally build manual selector node
+  * do not fail if BUILD_MANUAL_SELECTOR is true but Curses is not found
+* remove variables that depend on CMAKE_BINARY_DIR being set (`#398 <https://github.com/BehaviorTree/BehaviorTree.CPP/issues/398>`_)
+  * remove variables that depend on CMAKE_BINARY_DIR being set
+  * Update cmake.yml
+* Small comments on node registration (`#399 <https://github.com/BehaviorTree/BehaviorTree.CPP/issues/399>`_)
+* Fix destination in CMakeLists.txt (`#389 <https://github.com/BehaviorTree/BehaviorTree.CPP/issues/389>`_)
+* Contributors: Adam Sasine, Alberto Soragna, AndyZe, Davide Faconti, Dennis, Gaël Écorchard, Jafar, Joseph Schornak, Luca Bonamini, Paul Bovbel, Tim Clephas, Will
+
+3.7.0 (2022-05-23)
+-----------
+* add netlify stuff
+* Event based trigger introduced
+  Added a new mechanism to emit "state changed" events that can "wake up" a tree.
+  In short, it just provide an interruptible "sleep" function.
+* Fixed bug where including relative paths would fail to find the correct file (`#358 <https://github.com/BehaviorTree/BehaviorTree.CPP/issues/358>`_)
+  * Added unit tests to verify current behavior
+  * Fixed bug where including relative paths would fail to find the correct file
+  * Added gtest environment to access executable path
+  This path lets tests access files relative to the executable for better transportability
+  * Changed file commandto add_custom_target
+  The file command only copies during the cmake configure step. If source files change, file is not ran again
+* Added pure CMake action to PR checks (`#378 <https://github.com/BehaviorTree/BehaviorTree.CPP/issues/378>`_)
+  * Added CMake CI to PR checks
+  * Renamed action to follow pattern
+* updated documentation
+* add the ability to register multiple BTs (`#373 <https://github.com/BehaviorTree/BehaviorTree.CPP/issues/373>`_)
+* Update ros1.yaml
+* fix `#338 <https://github.com/BehaviorTree/BehaviorTree.CPP/issues/338>`_
+* fix issue `#330 <https://github.com/BehaviorTree/BehaviorTree.CPP/issues/330>`_
+* fix issue `#360 <https://github.com/BehaviorTree/BehaviorTree.CPP/issues/360>`_
+* Merge branch 'master' of github.com:BehaviorTree/BehaviorTree.CPP
+* Update Tutorial 2 Docuemtation (`#372 <https://github.com/BehaviorTree/BehaviorTree.CPP/issues/372>`_)
+* Update tutorial_09_coroutines.md (`#359 <https://github.com/BehaviorTree/BehaviorTree.CPP/issues/359>`_)
+  Minor fix, renamed Timepoint to TimePoint.
+* Export dependency on ament_index_cpp (`#362 <https://github.com/BehaviorTree/BehaviorTree.CPP/issues/362>`_)
+  To make dependent packages try to link ament_index_cpp, export the
+  dependency explicitly.
+* Change order of lock to prevent deadlock. (`#368 <https://github.com/BehaviorTree/BehaviorTree.CPP/issues/368>`_)
+  Resolves `#367 <https://github.com/BehaviorTree/BehaviorTree.CPP/issues/367>`_.
+* Fix `#320 <https://github.com/BehaviorTree/BehaviorTree.CPP/issues/320>`_ : forbit refrences in Any
+* Update action_node.h
+* Contributors: Adam Sasine, Davide Faconti, Fabian Schurig, Griswald Brooks, Hyeongsik Min, Robodrome, imgbot[bot], panwauu
+
+3.6.1 (2022-03-06)
+------------------
+* remove windows tests
+* fix thread safety
+* fix CI
+* Don't restart SequenceStar on halt (`#329 <https://github.com/BehaviorTree/BehaviorTree.CPP/issues/329>`_)
+  * Add more SequenceStar tests
+  * Fix typo in test name
+  * Don't reset SequenceStar on halt
+* [docs] add missing node `SmashDoor` (`#342 <https://github.com/BehaviorTree/BehaviorTree.CPP/issues/342>`_)
+* ROS2 include ros_pkg attribute support (`#351 <https://github.com/BehaviorTree/BehaviorTree.CPP/issues/351>`_)
+  * ROS2 include pkg support
+  * ros2 build fixed
+  Co-authored-by: Benjamin Linne <benjamin.linne.civ@army.mil>
+* [ImgBot] Optimize images (`#334 <https://github.com/BehaviorTree/BehaviorTree.CPP/issues/334>`_)
+  *Total -- 90.34kb -> 61.77kb (31.63%)
+  /docs/images/Tutorial1.svg -- 10.08kb -> 6.33kb (37.19%)
+  /docs/images/FetchBeerFails.svg -- 9.00kb -> 5.93kb (34.13%)
+  /docs/images/FetchBeer2.svg -- 21.19kb -> 14.41kb (32%)
+  /docs/images/Tutorial2.svg -- 34.19kb -> 23.75kb (30.54%)
+  /docs/images/DecoratorEnterRoom.svg -- 15.88kb -> 11.35kb (28.54%)
+  Co-authored-by: ImgBotApp <ImgBotHelp@gmail.com>
+* [Docs] BT_basics fix typo (`#343 <https://github.com/BehaviorTree/BehaviorTree.CPP/issues/343>`_)
+* [docs] Clarify sentence (`#344 <https://github.com/BehaviorTree/BehaviorTree.CPP/issues/344>`_)
+  `... will sleep up to 8 hours or less, if he/she is fully rested.` was not clear. It can also be understood as `If he/she is fully rested, the character will sleep ...`
+* [docs] match text to graphics (`#340 <https://github.com/BehaviorTree/BehaviorTree.CPP/issues/340>`_)
+* Docs: BT_basics fix typo (`#337 <https://github.com/BehaviorTree/BehaviorTree.CPP/issues/337>`_)
+* Merge branch 'master' of github.com:BehaviorTree/BehaviorTree.CPP
+* fix svg
+* Fix CMake ENABLE_COROUTINES flag with Boost < 1.59 (`#335 <https://github.com/BehaviorTree/BehaviorTree.CPP/issues/335>`_)
+  Co-authored-by: Cam Fulton <cfulton@symbotic.com>
+* Add ENABLE_COROUTINES CMake option (`#316 <https://github.com/BehaviorTree/BehaviorTree.CPP/issues/316>`_)
+  * Add DISABLE_COROUTINES CMake option
+  * Change convention of CMake coroutine flag to ENABLE
+  Co-authored-by: Cam Fulton <cfulton@symbotic.com>
+* [ImgBot] Optimize images (`#333 <https://github.com/BehaviorTree/BehaviorTree.CPP/issues/333>`_)
+  *Total -- 152.97kb -> 114.57kb (25.1%)
+  /docs/images/ReactiveSequence.svg -- 7.58kb -> 4.59kb (39.47%)
+  /docs/images/SequenceNode.svg -- 11.28kb -> 7.12kb (36.87%)
+  /docs/images/SequenceStar.svg -- 11.22kb -> 7.09kb (36.8%)
+  /docs/images/DecoratorEnterRoom.svg -- 20.71kb -> 13.30kb (35.77%)
+  /docs/images/FallbackBasic.svg -- 19.09kb -> 12.64kb (33.79%)
+  /docs/images/FetchBeer.svg -- 24.30kb -> 16.36kb (32.66%)
+  /docs/images/SequenceBasic.svg -- 6.32kb -> 5.49kb (13.04%)
+  /docs/images/Tutorial1.svg -- 6.67kb -> 5.94kb (10.98%)
+  /docs/images/FetchBeerFails.svg -- 6.46kb -> 5.83kb (9.76%)
+  /docs/images/FetchBeer2.svg -- 14.99kb -> 13.76kb (8.18%)
+  /docs/images/Tutorial2.svg -- 24.35kb -> 22.44kb (7.85%)
+  Co-authored-by: ImgBotApp <ImgBotHelp@gmail.com>
+* doc fix
+* Merge branch 'new_doc'
+* remove deprecated code
+* updated documentation
+* [Fix] Fix cmake version warning and -Wformat warning (`#319 <https://github.com/BehaviorTree/BehaviorTree.CPP/issues/319>`_)
+  Co-authored-by: Homalozoa <xuhaiwang@xiaomi.com>
+* Update README.md
+* Fix Windows shared lib build (`#323 <https://github.com/BehaviorTree/BehaviorTree.CPP/issues/323>`_)
+* fix shadowed variable in string_view.hpp (`#327 <https://github.com/BehaviorTree/BehaviorTree.CPP/issues/327>`_)
+* Build Sample Nodes By Default to Fix Github Action (`#332 <https://github.com/BehaviorTree/BehaviorTree.CPP/issues/332>`_)
+  * Fix github action
+  * Change working directory in github action step
+  * Build samples by default
+* Added BlackboardCheckBool decorator node (`#326 <https://github.com/BehaviorTree/BehaviorTree.CPP/issues/326>`_)
+  * Added tests for BlackboardCheck decorator node
+  * Added BlackboardCheckBool decorator node
+* Fixed typo "Exeption" -> "Exception" (`#331 <https://github.com/BehaviorTree/BehaviorTree.CPP/issues/331>`_)
+* WIP
+* fix `#325 <https://github.com/BehaviorTree/BehaviorTree.CPP/issues/325>`_
+* Contributors: Adam Sasine, Affonso, Guilherme, Alberto Soragna, Davide Faconti, Homalozoa X, Jake Keller, Philippe Couvignou, Tobias Fischer, benjinne, fultoncjb, goekce, imgbot[bot]
+
+3.6.0 (2021-11-10)
+------------------
+* Build samples independently of examples (`#315 <https://github.com/BehaviorTree/BehaviorTree.CPP/issues/315>`_)
+* Fix dependency in package.xml (`#313 <https://github.com/BehaviorTree/BehaviorTree.CPP/issues/313>`_)
+* Fix doc statement (`#309 <https://github.com/BehaviorTree/BehaviorTree.CPP/issues/309>`_)
+  Fix sentence
+* Fix references to RetryUntilSuccesful (`#308 <https://github.com/BehaviorTree/BehaviorTree.CPP/issues/308>`_)
+  * Fix github action
+  * Fix references to RetryUntilSuccesful
+* added subclass RetryNodeTypo (`#295 <https://github.com/BehaviorTree/BehaviorTree.CPP/issues/295>`_)
+  Co-authored-by: Subaru Arai <SubaruArai@local>
+* Fix github action (`#302 <https://github.com/BehaviorTree/BehaviorTree.CPP/issues/302>`_)
+* Minor spelling correction (`#305 <https://github.com/BehaviorTree/BehaviorTree.CPP/issues/305>`_)
+  Corrected `the_aswer` to `the_answer`
+* Update FallbackNode.md (`#306 <https://github.com/BehaviorTree/BehaviorTree.CPP/issues/306>`_)
+  typo correction.
+* Add signal handler for Windows (`#307 <https://github.com/BehaviorTree/BehaviorTree.CPP/issues/307>`_)
+* fix
+* file renamed and documentation fixed
+* Update documentation for reactive sequence (`#286 <https://github.com/BehaviorTree/BehaviorTree.CPP/issues/286>`_)
+* Update FallbackNode.md (`#287 <https://github.com/BehaviorTree/BehaviorTree.CPP/issues/287>`_)
+  Fix the pseudocode in the documentation of 'Reactive Fallback' according to its source code.
+* Update fallback documentation to V3 (`#288 <https://github.com/BehaviorTree/BehaviorTree.CPP/issues/288>`_)
+  * Update FallbackNode.md description to V3
+  * Fix typo
+* Use pedantic for non MSVC builds (`#289 <https://github.com/BehaviorTree/BehaviorTree.CPP/issues/289>`_)
+* Merge branch 'master' of https://github.com/BehaviorTree/BehaviorTree.CPP
+* updated to latest flatbuffers
+* Update README.md
+* Fix issue `#273 <https://github.com/BehaviorTree/BehaviorTree.CPP/issues/273>`_
+* remove potential crash when an unfinished tree throws an exception
+* remove appveyor
+* Merge branch 'git_actions'
+* Fixes for compilation on windows. (`#248 <https://github.com/BehaviorTree/BehaviorTree.CPP/issues/248>`_)
+  * Fix for detecting ZeroMQ on windows
+  Naming convention is a bit different for ZeroMQ, specifically on Windows with vcpkg. While ZMQ and ZeroMQ are valid on linux, the ZMQ naming convention only works on linux.
+  * Compilation on windows not working with /WX
+  * Macro collision on Windows
+  On windows, the macros defined in the abstract logger collides with other in windows.h. Made them lowercase to avoid collision
+* Remove native support for Conan (`#280 <https://github.com/BehaviorTree/BehaviorTree.CPP/issues/280>`_)
+* add github workflow
+* Registered missing dummy nodes for examples (`#275 <https://github.com/BehaviorTree/BehaviorTree.CPP/issues/275>`_)
+  * Added CheckTemperature dummy node
+  * Added SayHello dummy node
+* add zmq.hpp in 3rdparty dirfectory
+* add test
+* fix some warnings
+* Fix bug on halt of delay node (`#272 <https://github.com/BehaviorTree/BehaviorTree.CPP/issues/272>`_)
+  - When DelayNode is halted and ticked again, it always returned FAILURE since the state of DelayNode was not properly reset.
+  - This commit fixes unexpected behavior of DelayNode when it is halted.
+  Co-authored-by: Jinwoo Choi <jinwoos.choi@samsung.com>
+* Clear all of blackboard's content (`#269 <https://github.com/BehaviorTree/BehaviorTree.CPP/issues/269>`_)
+* Added printTreeRecursively overload with ostream parameter (`#264 <https://github.com/BehaviorTree/BehaviorTree.CPP/issues/264>`_)
+  * Added overload to printTreeRecursively
+  * Changed include to iosfwd
+  * Added test to verify function writes to stream
+  * Added call to overload without stream parameter
+  * Fixed conversion error
+  * Removed overload in favor of default argument
+* Fix typo (`#260 <https://github.com/BehaviorTree/BehaviorTree.CPP/issues/260>`_)
+  Co-authored-by: Francesco Vigni <francesco.vigni@sttech.de>
+* Update README.md
+* abstract_logger.h: fixed a typo (`#257 <https://github.com/BehaviorTree/BehaviorTree.CPP/issues/257>`_)
+* Contributors: Adam Sasine, Affonso, Guilherme, Akash, Billy, Cong Liu, Daisuke Nishimatsu, Davide Faconti, Francesco Vigni, Heben, Jake Keller, Per-Arne Andersen, Ross Weir, Steve Macenski, SubaruArai, Taehyeon, Uilian Ries, Yadu, Yuwei Liang, matthews-jca, swarajpeppermint
+
+3.5.6 (2021-02-03)
+------------------
+* fix issue `#227 <https://github.com/BehaviorTree/BehaviorTree.CPP/issues/227>`_
+* fix issue `#256 <https://github.com/BehaviorTree/BehaviorTree.CPP/issues/256>`_
+* Merge branch 'master' of https://github.com/BehaviorTree/BehaviorTree.CPP
+* fix issue `#250 <https://github.com/BehaviorTree/BehaviorTree.CPP/issues/250>`_
+* Fixed typos on SequenceNode.md (`#254 <https://github.com/BehaviorTree/BehaviorTree.CPP/issues/254>`_)
+* Contributors: Davide Faconti, LucasNolasco
+
+3.5.5 (2021-01-27)
+------------------
+* fix issue `#251 <https://github.com/BehaviorTree/BehaviorTree.CPP/issues/251>`_
+* Contributors: Davide Faconti
+
+3.5.4 (2020-12-10)
+------------------
+* Update bt_factory.cpp (`#245 <https://github.com/BehaviorTree/BehaviorTree.CPP/issues/245>`_)
+* Use the latest version of zmq.hpp
+* Improved switching BTs with active Groot monitoring (ZMQ logger destruction) (`#244 <https://github.com/BehaviorTree/BehaviorTree.CPP/issues/244>`_)
+  * Skip 100ms (max) wait for detached thread
+  * add {} to single line if statements
+* Update retry_node.cpp
+* fix
+* fix issue `#230 <https://github.com/BehaviorTree/BehaviorTree.CPP/issues/230>`_
+* Contributors: Davide Faconti, Florian Gramß, amangiat88
+
+3.5.3 (2020-09-10)
+------------------
+* fix issue `#228 <https://github.com/BehaviorTree/BehaviorTree.CPP/issues/228>`_ . Retry and Repeat node need to halt the child
+* better tutorial
+* Contributors: Davide Faconti
+
 3.5.2 (2020-09-02)
 ------------------
 * fix warning and follow coding standard

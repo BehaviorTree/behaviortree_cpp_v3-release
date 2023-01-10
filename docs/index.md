@@ -11,14 +11,19 @@ __AI for games__, or to replace Finite State Machines in you application.
 
 __BehaviorTree.CPP__ has many interesting features, when compared to other implementations:
 
-- It makes asynchronous Actions, i.e. non-blocking, a first-class citizen.
+- It makes asynchronous Actions, i.e. non-blocking routines, a first-class citizen.
 - It allows the creation of trees at run-time, using a textual representation (XML).
-- You can link staticaly you custom TreeNodes or convert them into plugins 
+- You can link staticaly your custom TreeNodes or convert them into plugins
 which are loaded at run-time.
 - It includes a __logging/profiling__ infrastructure that allows the user 
 to visualize, record, replay and analyze state transitions.
 
 ![ReadTheDocs](images/ReadTheDocs.png)  
+
+## Community
+
+If this documentation doesn't answer your questions or if you simply want to
+connect with the community of BT.CPP users, visit [discourse.behaviortree.dev](https://discourse.behaviortree.dev/).
 
 ## What is a Behavior Tree?
 
@@ -37,7 +42,7 @@ The main advantages of Behavior Trees, when compared to FSMs are:
 
 - __They are intrinsically Hierarchical__: this means that we can _compose_
 complex behaviors including entire trees as sub-branches of a bigger tree. 
-For instance, the behavior "Fetch Beer" may reuse in one of its nodes the tree
+For instance, the behavior "Fetch Beer" may reuse the tree
 "Grasp Object".
 
 - __Their graphical representation has a semantic meaning__: it is easier to 
@@ -52,7 +57,7 @@ make possible to express more complex control flows. The user can extend the
 
 ## "Ok, but WHY do we need BehaviorTrees (or FSM)?"
 
-Many software systems, being robotics a notable example, are inherently
+Many software systems, robotics being a notable example, are inherently
 complex.
 
 The usual approach to manage complexity, heterogeneity and scalability is to 
@@ -74,11 +79,7 @@ If we don't keep these concepts in mind from the very beginning, we create
 software modules/components which are highly coupled to a particular application,
 instead of being reusable.
 
-Frequently, the concern of __Coordination__ is mixed with __Computation__. 
-In other words, people address the problems of coordinating actions and take decisions
-locally.
-
-The business logic becomes "spread" in many locations and it is __hard for the developer
+Frequently, the business logic is "spread" in many locations and it is __hard for the developer
 to reason about it and to debug errors__ in the control flow.
 
 To achieve strong separation of concerns it is better to centralize
