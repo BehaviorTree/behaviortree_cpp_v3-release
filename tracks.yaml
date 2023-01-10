@@ -211,8 +211,10 @@ tracks:
     - git-bloom-generate -y rosdebian --prefix release/:{ros_distro} :{ros_distro}
       -i :{release_inc} --os-name debian --os-not-required
     - git-bloom-generate -y rosrpm --prefix release/:{ros_distro} :{ros_distro} -i
-      :{release_inc}
-    devel_branch: master
+      :{release_inc} --os-name fedora
+    - git-bloom-generate -y rosrpm --prefix release/:{ros_distro} :{ros_distro} -i
+      :{release_inc} --os-name rhel
+    devel_branch: v3.8
     last_version: 3.5.2
     name: upstream
     patches: null
