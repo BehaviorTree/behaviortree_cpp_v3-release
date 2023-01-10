@@ -18,93 +18,99 @@ namespace BT
 void applyRecursiveVisitor(const TreeNode* node,
                            const std::function<void(const TreeNode*)>& visitor)
 {
-    if (!node)
-    {
-        throw LogicError("One of the children of a DecoratorNode or ControlNode is nullptr");
-    }
+  if (!node)
+  {
+    throw LogicError("One of the children of a DecoratorNode or ControlNode is "
+                     "nullptr");
+  }
 
-    visitor(node);
+  visitor(node);
 
-    if (auto control = dynamic_cast<const BT::ControlNode*>(node))
+  if (auto control = dynamic_cast<const BT::ControlNode*>(node))
+  {
+    for (const auto& child : control->children())
     {
-        for (const auto& child : control->children())
-        {
-            applyRecursiveVisitor(static_cast<const TreeNode*>(child), visitor);
-        }
+      applyRecursiveVisitor(static_cast<const TreeNode*>(child), visitor);
     }
-    else if (auto decorator = dynamic_cast<const BT::DecoratorNode*>(node))
-    {
-        applyRecursiveVisitor(decorator->child(), visitor);
-    }
+  }
+  else if (auto decorator = dynamic_cast<const BT::DecoratorNode*>(node))
+  {
+    applyRecursiveVisitor(decorator->child(), visitor);
+  }
 }
 
 void applyRecursiveVisitor(TreeNode* node, const std::function<void(TreeNode*)>& visitor)
 {
+  if (!node)
+  {
+    throw LogicError("One of the children of a DecoratorNode or ControlNode is "
+                     "nullptr");
+  }
+
+  visitor(node);
+
+  if (auto control = dynamic_cast<BT::ControlNode*>(node))
+  {
+    for (const auto& child : control->children())
+    {
+      applyRecursiveVisitor(child, visitor);
+    }
+  }
+  else if (auto decorator = dynamic_cast<BT::DecoratorNode*>(node))
+  {
+    if (decorator->child())
+    {
+      applyRecursiveVisitor(decorator->child(), visitor);
+    }
+  }
+}
+
+void printTreeRecursively(const TreeNode* root_node, std::ostream& stream)
+{
+  std::function<void(unsigned, const BT::TreeNode*)> recursivePrint;
+
+  recursivePrint = [&recursivePrint, &stream](unsigned indent, const BT::TreeNode* node) {
+    for (unsigned i = 0; i < indent; i++)
+    {
+      stream << "   ";
+    }
     if (!node)
     {
-        throw LogicError("One of the children of a DecoratorNode or ControlNode is nullptr");
+      stream << "!nullptr!" << std::endl;
+      return;
     }
+    stream << node->name() << std::endl;
+    indent++;
 
-    visitor(node);
-
-    if (auto control = dynamic_cast<BT::ControlNode*>(node))
+    if (auto control = dynamic_cast<const BT::ControlNode*>(node))
     {
-        for (const auto& child : control->children())
-        {
-            applyRecursiveVisitor(child, visitor);
-        }
+      for (const auto& child : control->children())
+      {
+        recursivePrint(indent, child);
+      }
     }
-    else if (auto decorator = dynamic_cast<BT::DecoratorNode*>(node))
+    else if (auto decorator = dynamic_cast<const BT::DecoratorNode*>(node))
     {
-        applyRecursiveVisitor(decorator->child(), visitor);
+      recursivePrint(indent, decorator->child());
     }
+  };
+
+  stream << "----------------" << std::endl;
+  recursivePrint(0, root_node);
+  stream << "----------------" << std::endl;
 }
 
-void printTreeRecursively(const TreeNode* root_node)
+void buildSerializedStatusSnapshot(TreeNode* root_node,
+                                   SerializedTreeStatus& serialized_buffer)
 {
-    std::function<void(unsigned, const BT::TreeNode*)> recursivePrint;
+  serialized_buffer.clear();
 
-    recursivePrint = [&recursivePrint](unsigned indent, const BT::TreeNode* node) {
-        for (unsigned i = 0; i < indent; i++)
-        {
-            std::cout << "   ";
-        }
-        if (!node)
-        {
-            std::cout << "!nullptr!" << std::endl;
-            return;
-        }
-        std::cout << node->name() << std::endl;
-        indent++;
+  auto visitor = [&serialized_buffer](const TreeNode* node) {
+    serialized_buffer.push_back(
+        std::make_pair(node->UID(), static_cast<uint8_t>(node->status())));
+  };
 
-        if (auto control = dynamic_cast<const BT::ControlNode*>(node))
-        {
-            for (const auto& child : control->children())
-            {
-                recursivePrint(indent, child);
-            }
-        }
-        else if (auto decorator = dynamic_cast<const BT::DecoratorNode*>(node))
-        {
-            recursivePrint(indent, decorator->child());
-        }
-    };
-
-    std::cout << "----------------" << std::endl;
-    recursivePrint(0, root_node);
-    std::cout << "----------------" << std::endl;
+  applyRecursiveVisitor(root_node, visitor);
 }
 
-void buildSerializedStatusSnapshot(TreeNode* root_node, SerializedTreeStatus& serialized_buffer)
-{
-    serialized_buffer.clear();
-
-    auto visitor = [&serialized_buffer](const TreeNode* node) {
-        serialized_buffer.push_back(
-            std::make_pair(node->UID(), static_cast<uint8_t>(node->status())));
-    };
-
-    applyRecursiveVisitor(root_node, visitor);
-}
-
-} // end namespace
+}   // namespace BT
