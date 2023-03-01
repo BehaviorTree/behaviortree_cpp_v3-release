@@ -2,6 +2,12 @@
 Changelog for package behaviortree_cpp
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+3.8.3 (2023-03-01)
+------------------
+* fix and warnings added
+* fix in SharedLibrary and cosmetic changes to the code
+* Contributors: Davide Faconti
+
 3.8.2 (2023-01-05)
 ------------------
 * rebane haltChildren to resetChildren
