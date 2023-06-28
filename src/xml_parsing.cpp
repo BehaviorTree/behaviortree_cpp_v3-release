@@ -165,6 +165,7 @@ void XMLParser::Pimpl::loadDocImpl(tinyxml2::XMLDocument* doc, bool add_includes
         std::string ros_pkg_path;
 #ifdef USING_ROS
         ros_pkg_path = ros::package::getPath(ros_pkg_relative_path);
+        file_path = filesystem::path(ros_pkg_path) / file_path;
 #elif defined USING_ROS2
         ros_pkg_path =
             ament_index_cpp::get_package_share_directory(ros_pkg_relative_path);
@@ -573,7 +574,7 @@ TreeNode::Ptr XMLParser::Pimpl::createNodeFromXML(const XMLElement* element,
         if (!prev_info)
         {
           // not found, insert for the first time.
-          blackboard->setPortInfo(port_key, port_info);
+          blackboard->createEntry(port_key, port_info);
         }
         else
         {
@@ -707,8 +708,6 @@ void BT::XMLParser::Pimpl::recursivelyCreateTree(const std::string& tree_ID,
         output_tree.blackboard_stack.emplace_back(new_bb);
         std::set<StringView> mapped_keys;
 
-        bool do_autoremap = false;
-
         for (const XMLAttribute* attr = element->FirstAttribute(); attr != nullptr;
              attr = attr->Next())
         {
@@ -721,7 +720,8 @@ void BT::XMLParser::Pimpl::recursivelyCreateTree(const std::string& tree_ID,
           }
           if (StrEqual(attr_name, "__autoremap"))
           {
-            do_autoremap = convertFromString<bool>(attr_value);
+            bool do_autoremap = convertFromString<bool>(attr_value);
+            new_bb->enableAutoRemapping(do_autoremap);
             continue;
           }
 
@@ -737,21 +737,6 @@ void BT::XMLParser::Pimpl::recursivelyCreateTree(const std::string& tree_ID,
             // constant string: just set that constant value into the BB
             new_bb->set(attr_name, static_cast<std::string>(attr_value));
             mapped_keys.insert(attr_name);
-          }
-        }
-
-        if (do_autoremap)
-        {
-          std::vector<std::string> remapped_ports;
-          auto new_root_element = tree_roots[node->name()]->FirstChildElement();
-
-          getPortsRecursively(new_root_element, remapped_ports);
-          for (const auto& port : remapped_ports)
-          {
-            if (mapped_keys.count(port) == 0)
-            {
-              new_bb->addSubtreeRemapping(port, port);
-            }
           }
         }
 
