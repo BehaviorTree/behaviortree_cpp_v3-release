@@ -7,6 +7,35 @@ void Blackboard::enableAutoRemapping(bool remapping)
   autoremapping_ = remapping;
 }
 
+const Any *Blackboard::getAny(const std::string &key) const
+{
+  std::unique_lock<std::mutex> lock(mutex_);
+  auto it = storage_.find(key);
+
+  if(it == storage_.end())
+  {
+    // Try with autoremapping. This should work recursively
+    auto remapping_it = internal_to_external_.find(key);
+    if (remapping_it != internal_to_external_.end())
+    {
+      const auto& remapped_key = remapping_it->second;
+      if (auto parent = parent_bb_.lock())
+      {
+        return parent->getAny(remapped_key);
+      }
+    }
+
+    else if(autoremapping_)
+    {
+      if(auto parent = parent_bb_.lock()) {
+        return parent->getAny(key);
+      }
+    }
+    return nullptr;
+  }
+  return &(it->second->value);
+}
+
 const PortInfo* Blackboard::portInfo(const std::string& key)
 {
   std::unique_lock<std::mutex> lock(mutex_);
@@ -75,12 +104,14 @@ Blackboard::createEntryImpl(const std::string &key, const PortInfo& info)
   auto storage_it = storage_.find(key);
   if(storage_it != storage_.end())
   {
-    const auto old_type = storage_it->second->port_info.type();
-    if (old_type && info.type() && old_type != info.type())
+    const auto& prev_info = storage_it->second->port_info;
+    if (prev_info.type() != info.type() &&
+        prev_info.isStronglyTyped() &&
+        info.isStronglyTyped())
     {
       throw LogicError("Blackboard: once declared, the type of a port "
                        "shall not change. Previously declared type [",
-                       BT::demangle(old_type), "] != new type [",
+                       BT::demangle(prev_info.type()), "] != new type [",
                        BT::demangle(info.type()), "]");
     }
     return storage_it->second;
